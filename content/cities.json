@@ -1,0 +1,5 @@
+[
+  { "name": "London", "timezone": "Europe/London", "image": "/images/cities/london.png" },
+  { "name": "New York", "timezone": "America/New_York", "image": "/images/cities/newyork.png" },
+  { "name": "Tokyo", "timezone": "Asia/Tokyo", "image": "/images/cities/tokyo.png" }
+]
