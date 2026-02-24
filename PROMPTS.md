@@ -78,7 +78,6 @@ Content expectation:
 
 Constraints:
 
-- Follow PLAN.md strictly
 - Reuse existing layout patterns
 - Do not introduce abstractions
 - Keep design minimal and consistent
@@ -91,9 +90,6 @@ Apply the changes directly.
 ---
 
 ## Modify Existing Section
-
-This project is governed by PLAN.md.
-Follow it strictly as non-negotiable constraints.
 
 You are modifying an existing section of the site.
 

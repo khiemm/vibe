@@ -60,12 +60,14 @@ Allowed:
 - File-based content rendering
 - Small reusable components (only when repetition is obvious)
 - Light motion for presence (hover/enter), not spectacle
+- Borders should be square or use very small radius (e.g. rounded-sm at most)
 
 Not allowed:
 
 - “systems” (theme system, design system, plugin architecture)
 - generalized component factories / render props patterns
 - dynamic server behavior (beyond basic Next rendering)
+- heavy rounding styles (rounded-lg, rounded-xl, etc.)
 
 ## 6. Code Style Rules
 

@@ -1,5 +1,26 @@
 [
-  { "name": "London", "timezone": "Europe/London", "image": "/images/cities/london.png" },
-  { "name": "New York", "timezone": "America/New_York", "image": "/images/cities/newyork.png" },
-  { "name": "Tokyo", "timezone": "Asia/Tokyo", "image": "/images/cities/tokyo.png" }
+  {
+    "name": "London",
+    "timezone": "Europe/London",
+    "image": "/images/cities/london.jpg",
+    "description": "London is home to five famous football clubs: Arsenal, Chelsea, Tottenham, West Ham, and Crystal Palace."
+  },
+  {
+    "name": "New York",
+    "timezone": "America/New_York",
+    "image": "/images/cities/newyork.jpg",
+    "description": "New York City is known for the Statue of Liberty, Broadway, Central Park, and its diverse neighborhoods."
+  },
+  {
+    "name": "Tokyo",
+    "timezone": "Asia/Tokyo",
+    "image": "/images/cities/tokyo.jpg",
+    "description": "Tokyo blends traditional temples and gardens with neon-lit districts, cutting-edge technology, and world-class cuisine."
+  },
+  {
+    "name": "Paris",
+    "timezone": "Europe/Paris",
+    "image": "/images/cities/paris.jpg",
+    "description": "Paris is famous for the Eiffel Tower, world-renowned art museums like the Louvre, historic cafés, and its rich culture of fashion and cuisine."
+  }
 ]
