@@ -71,10 +71,38 @@ Apply the changes directly.
 Add a new page to the website.
 
 Page purpose:
-[Describe the purpose of the page. Example: About page, Notes page.]
+Blog pages in format /app/blogs/[slug]/page.mdx
 
 Content expectation:
-[Describe roughly what should appear on the page.]
+using mdx, install necessary libraries: next-mdx-remote, gray-matter
+folder structure:
+content/
+  blog/
+    hello-world.mdx
+app/
+  blog/
+    page.tsx
+    [slug]/
+      page.tsx
+components/
+  mdx/
+    MDXComponents.tsx
+after that: implement other helper functions by yourself
+example: lib/blog.ts
+content/
+  blog/
+    hello-world.mdx
+    caching-101.mdx
+
+app/
+  blog/
+    page.tsx
+    [slug]/
+      page.tsx
+
+components/
+  mdx/
+    MDXComponents.tsx
 
 Constraints:
 
