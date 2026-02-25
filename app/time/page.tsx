@@ -54,6 +54,17 @@ export default function TimePage() {
     return () => clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    if (!selectedCity) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedCity(null);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectedCity]);
+
   const hours = now.getHours();
   const minutes = now.getMinutes();
   const seconds = now.getSeconds();
@@ -179,12 +190,11 @@ export default function TimePage() {
           </h2>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {cities.map((city) => (
-              <div
+              <button
                 key={city.timezone}
-                role="button"
-                tabIndex={0}
+                type="button"
                 onClick={() => setSelectedCity(city)}
-                onKeyDown={(e) => e.key === 'Enter' && setSelectedCity(city)}
+                aria-label={`Open ${city.name} details`}
                 className="relative overflow-hidden rounded-sm aspect-[4/3] bg-gradient-to-br from-gray-800 to-gray-900 cursor-pointer focus:outline-none focus:ring-1 focus:ring-gray-500"
                 style={{
                   backgroundImage: `url(${city.image}), linear-gradient(to bottom right, rgb(31 41 55), rgb(17 24 39))`,
@@ -200,7 +210,7 @@ export default function TimePage() {
                     {times[city.timezone] ?? '—'}
                   </span>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </section>
