@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import { cache } from 'react'
 
 const BLOG_DIR = path.join(process.cwd(), 'content', 'blog')
 
@@ -23,31 +24,47 @@ function readFileSafe(filePath: string) {
 }
 
 export function getPostSlugs(): string[] {
-  if (!fs.existsSync(BLOG_DIR)) return []
-  return fs
-    .readdirSync(BLOG_DIR)
-    .filter((file) => file.endsWith('.mdx'))
-    .map((file) => file.replace(/\.mdx$/, ''))
+  return getAllPosts().map((post) => post.slug)
 }
 
-function readRawPost(slug: string): RawPost {
-  const fullPath = path.join(BLOG_DIR, `${slug}.mdx`)
+function readRawPostFromFile(fileName: string): RawPost {
+  const fullPath = path.join(BLOG_DIR, fileName)
+  const fileSlug = fileName.replace(/\.mdx$/, '')
   const fileContents = readFileSafe(fullPath)
   const { data, content } = matter(fileContents)
 
   const meta: BlogFrontmatter = {
-    title: String(data.title ?? slug),
+    title: String(data.title ?? fileSlug),
     date: String(data.date ?? ''),
-    slug: String(data.slug ?? slug),
+    slug: String(data.slug ?? fileSlug),
     excerpt: data.excerpt ? String(data.excerpt) : undefined,
   }
 
   return { meta, content }
 }
 
+const readAllRawPosts = cache((): RawPost[] => {
+  if (!fs.existsSync(BLOG_DIR)) return []
+
+  const files = fs.readdirSync(BLOG_DIR).filter((file) => file.endsWith('.mdx'))
+  const posts = files.map((file) => readRawPostFromFile(file))
+  const seen = new Set<string>()
+
+  for (const post of posts) {
+    if (!post.meta.slug.trim()) {
+      throw new Error('Blog slug cannot be empty')
+    }
+    if (seen.has(post.meta.slug)) {
+      throw new Error(`Duplicate blog slug found: "${post.meta.slug}"`)
+    }
+    seen.add(post.meta.slug)
+  }
+
+  return posts
+})
+
 export function getAllPosts(): BlogPostMeta[] {
-  const slugs = getPostSlugs()
-  const posts = slugs.map((slug) => readRawPost(slug).meta)
+  const posts = readAllRawPosts().map((post) => post.meta)
 
   return posts.sort((a, b) => {
     if (!a.date || !b.date) return 0
@@ -55,7 +72,8 @@ export function getAllPosts(): BlogPostMeta[] {
   })
 }
 
-export function getPostBySlug(slug: string): RawPost {
-  return readRawPost(slug)
+export function getPostBySlug(slug: string): RawPost | null {
+  const post = readAllRawPosts().find((item) => item.meta.slug === slug)
+  return post ?? null
 }
 

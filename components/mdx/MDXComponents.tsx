@@ -1,4 +1,12 @@
 import type { MDXComponents } from 'mdx/types'
+import Callout from '@/components/mdx/Callout'
+import Compare from '@/components/mdx/Compare'
+import Flow from '@/components/mdx/Flow'
+import ImageFigure from '@/components/mdx/ImageFigure'
+import QuoteBlock from '@/components/mdx/QuoteBlock'
+import SectionBreak from '@/components/mdx/SectionBreak'
+import Stat from '@/components/mdx/Stat'
+import Steps from '@/components/mdx/Steps'
 
 const components: MDXComponents = {
   h1: (props) => (
@@ -44,6 +52,20 @@ const components: MDXComponents = {
       className="rounded-sm bg-gray-900/60 px-1.5 py-0.5 text-xs text-gray-200"
     />
   ),
+  blockquote: (props) => (
+    <blockquote
+      {...props}
+      className="mt-6 border-l border-gray-700 pl-4 text-gray-400 italic"
+    />
+  ),
+  Callout,
+  Steps,
+  Compare,
+  Flow,
+  ImageFigure,
+  QuoteBlock,
+  Stat,
+  SectionBreak,
 }
 
 export default components
