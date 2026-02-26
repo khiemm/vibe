@@ -28,8 +28,8 @@ export default async function BlogPostPage({ params }: { params: Params }) {
   })
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 py-16">
-      <div className="max-w-4xl w-full">
+    <main className="relative isolate flex min-h-screen px-4 py-16">
+      <div className="relative z-10 mx-auto my-auto w-full max-w-4xl">
         <header className="mb-10 space-y-2">
           <h1 className="text-3xl font-light tracking-tight text-gray-100">
             {post.meta.title}

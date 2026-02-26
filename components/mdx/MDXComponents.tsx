@@ -1,4 +1,5 @@
 import type { MDXComponents } from 'mdx/types'
+import BackgroundImageSection from '@/components/mdx/BackgroundImageSection'
 import Callout from '@/components/mdx/Callout'
 import Compare from '@/components/mdx/Compare'
 import Flow from '@/components/mdx/Flow'
@@ -62,6 +63,7 @@ const components: MDXComponents = {
   Steps,
   Compare,
   Flow,
+  BackgroundImageSection,
   ImageFigure,
   QuoteBlock,
   Stat,
