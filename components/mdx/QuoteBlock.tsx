@@ -6,12 +6,12 @@ type QuoteBlockProps = {
 
 const VARIANT_CLASSES: Record<NonNullable<QuoteBlockProps['variant']>, { root: string; footer: string }> = {
   default: {
-    root: 'border-gray-700 text-gray-300',
-    footer: 'text-gray-500',
+    root: 'border-[color:var(--site-border)] text-[color:var(--site-text)]',
+    footer: 'text-[color:var(--site-muted)]',
   },
   muted: {
-    root: 'border-gray-800 text-gray-400',
-    footer: 'text-gray-600',
+    root: 'border-[color:var(--site-border)] text-[color:var(--site-muted)]',
+    footer: 'text-[color:var(--site-muted)]',
   },
   accent: {
     root: 'border-cyan-500 text-cyan-200',
@@ -23,7 +23,11 @@ const VARIANT_CLASSES: Record<NonNullable<QuoteBlockProps['variant']>, { root: s
   },
 }
 
-export default function QuoteBlock({ quote, author, variant = 'default' }: QuoteBlockProps) {
+export default function QuoteBlock({
+  quote,
+  author,
+  variant = 'default',
+}: QuoteBlockProps) {
   const classes = VARIANT_CLASSES[variant]
   const rootClassName = `mt-8 border-l pl-4 ${classes.root}`
 

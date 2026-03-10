@@ -4,10 +4,59 @@
 
 :root {
   --font-inter: 'Inter', sans-serif;
+  --site-bg: rgb(0 0 0);
+  --site-text: rgb(209 213 219);
+  --site-heading: rgb(243 244 246);
+  --site-muted: rgb(107 114 128);
+  --site-border: rgb(31 41 55);
+  --site-surface: rgb(17 24 39 / 0.35);
+  --site-surface-hover: rgb(17 24 39 / 0.7);
+  --site-overlay: rgb(0 0 0 / 0.9);
+  --site-inline-code-bg: rgb(17 24 39 / 0.65);
+  --site-inline-code-text: rgb(229 231 235);
+  --site-link-decoration: rgb(107 114 128);
+  --site-link-hover: rgb(243 244 246);
+  --site-card-gradient-from: rgb(31 41 55);
+  --site-card-gradient-to: rgb(17 24 39);
+  --site-clock-stroke: rgb(82 82 82);
+  --site-clock-hour: rgb(212 212 212);
+  --site-clock-minute: rgb(163 163 163);
+  --site-clock-second: rgb(115 115 115);
+}
+
+html[data-theme='light'] {
+  --site-bg: rgb(255 255 255);
+  --site-text: rgb(55 65 81);
+  --site-heading: rgb(3 7 18);
+  --site-muted: rgb(107 114 128);
+  --site-border: rgb(209 213 219);
+  --site-surface: rgb(243 244 246);
+  --site-surface-hover: rgb(229 231 235);
+  --site-overlay: rgb(255 255 255 / 0.92);
+  --site-inline-code-bg: rgb(229 231 235);
+  --site-inline-code-text: rgb(17 24 39);
+  --site-link-decoration: rgb(156 163 175);
+  --site-link-hover: rgb(3 7 18);
+  --site-card-gradient-from: rgb(243 244 246);
+  --site-card-gradient-to: rgb(229 231 235);
+  --site-clock-stroke: rgb(156 163 175);
+  --site-clock-hour: rgb(17 24 39);
+  --site-clock-minute: rgb(75 85 99);
+  --site-clock-second: rgb(107 114 128);
 }
 
 @layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  html[data-theme='light'] {
+    color-scheme: light;
+  }
+
   body {
-    @apply bg-black text-gray-100;
+    @apply transition-colors;
+    background-color: var(--site-bg);
+    color: var(--site-text);
   }
 }

@@ -11,10 +11,10 @@ export default function Home() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="max-w-2xl text-center space-y-6"
       >
-        <h1 className="text-4xl md:text-5xl font-light tracking-tight">
+        <h1 className="text-4xl md:text-5xl font-light tracking-tight text-[color:var(--site-heading)]">
           Hello, I'm here.
         </h1>
-        <p className="text-lg text-gray-400 font-light">
+        <p className="text-lg font-light text-[color:var(--site-muted)]">
           A calm space on the web.
         </p>
       </motion.div>

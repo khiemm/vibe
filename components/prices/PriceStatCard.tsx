@@ -30,20 +30,20 @@ function statusClassName(status: CommodityPoint['status']): string {
 
 export default function PriceStatCard({ item }: PriceStatCardProps) {
   return (
-    <article className="border border-gray-800 bg-gray-900/40 p-4 rounded-sm">
+    <article className="rounded-sm border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-4">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-sm font-light tracking-tight text-gray-100">{item.label}</h3>
+        <h3 className="text-sm font-light tracking-tight text-[color:var(--site-heading)]">{item.label}</h3>
         <span className={`border px-2 py-0.5 text-[11px] uppercase tracking-[0.12em] ${statusClassName(item.status)}`}>
           {item.status}
         </span>
       </div>
 
-      <p className="mt-3 text-2xl font-light tracking-tight text-gray-100">{formatValue(item.value, item.unit)}</p>
+      <p className="mt-3 text-2xl font-light tracking-tight text-[color:var(--site-heading)]">{formatValue(item.value, item.unit)}</p>
 
       <div className="mt-3 space-y-1">
-        <p className="text-xs font-light text-gray-500">Source: {item.source}</p>
-        <p className="text-xs font-light text-gray-500">Updated: {formatUpdatedAt(item.updatedAt)} UTC</p>
-        {item.note && <p className="text-xs font-light text-gray-400">{item.note}</p>}
+        <p className="text-xs font-light text-[color:var(--site-muted)]">Source: {item.source}</p>
+        <p className="text-xs font-light text-[color:var(--site-muted)]">Updated: {formatUpdatedAt(item.updatedAt)} UTC</p>
+        {item.note && <p className="text-xs font-light text-[color:var(--site-text)]">{item.note}</p>}
       </div>
     </article>
   )

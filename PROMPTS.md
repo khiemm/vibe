@@ -89,6 +89,35 @@ Apply the changes directly.
 
 ---
 
+## Add Blog Post Prompt
+
+Add a new blog post in `content/blog`.
+
+Blog type:
+- `fixed-background`: use `<BackgroundImageSection />` near the top of the MDX so the image stays fixed while scrolling.
+- `standard`: do not use `<BackgroundImageSection />`; use the normal reading layout and let the global site theme control dark/light mode.
+
+Post topic:
+[Describe the topic.]
+
+Content shape:
+[Example: essay, note, link-and-commentary, step-by-step reflection.]
+
+Constraints:
+
+- Keep it file-based in MDX
+- Reuse existing MDX components when useful
+- Do not add abstractions unless repetition is obvious
+- If this is a `standard` blog, prefer plain content blocks over decorative sections
+- Keep slug, title, excerpt, and body content in English unless explicitly requested otherwise
+
+Implementation notes:
+[Optional: preferred slug, date, excerpt.]
+
+Apply the changes directly.
+
+---
+
 ## Modify Existing Section
 
 You are modifying an existing section of the site.

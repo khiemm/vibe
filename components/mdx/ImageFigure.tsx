@@ -13,9 +13,9 @@ export default function ImageFigure({
 }: ImageFigureProps) {
   return (
     <figure className="mt-8 space-y-2">
-      <img src={src} alt={alt} className="w-full border border-gray-800 bg-gray-900/20" />
+      <img src={src} alt={alt} className="w-full border border-[color:var(--site-border)] bg-[color:var(--site-surface)]" />
       {(caption || credit) && (
-        <figcaption className="text-xs leading-relaxed text-gray-500">
+        <figcaption className="text-xs leading-relaxed text-[color:var(--site-muted)]">
           {caption && <span>{caption}</span>}
           {caption && credit && <span> </span>}
           {credit && <span>{credit}</span>}

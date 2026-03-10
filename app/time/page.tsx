@@ -92,7 +92,7 @@ export default function TimePage() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="max-w-4xl w-full"
       >
-        <h1 className="text-3xl font-light tracking-tight mb-12 text-center text-gray-100">
+        <h1 className="mb-12 text-center text-3xl font-light tracking-tight text-[color:var(--site-heading)]">
           Time
         </h1>
 
@@ -104,7 +104,7 @@ export default function TimePage() {
                 cy="50"
                 r="45"
                 fill="none"
-                stroke="#525252"
+                stroke="var(--site-clock-stroke)"
                 strokeWidth="1.5"
               />
               {Array.from({ length: 12 }, (_, i) => {
@@ -120,7 +120,7 @@ export default function TimePage() {
                     y1={y1}
                     x2={x2}
                     y2={y2}
-                    stroke="#525252"
+                    stroke="var(--site-clock-stroke)"
                     strokeWidth="1"
                     strokeLinecap="round"
                   />
@@ -131,7 +131,7 @@ export default function TimePage() {
                 y1="50"
                 x2="50"
                 y2="28"
-                stroke="#d4d4d4"
+                stroke="var(--site-clock-hour)"
                 strokeWidth="2"
                 strokeLinecap="round"
                 transform={`rotate(${hourDeg} 50 50)`}
@@ -141,7 +141,7 @@ export default function TimePage() {
                 y1="50"
                 x2="50"
                 y2="18"
-                stroke="#a3a3a3"
+                stroke="var(--site-clock-minute)"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 transform={`rotate(${minuteDeg} 50 50)`}
@@ -151,7 +151,7 @@ export default function TimePage() {
                 y1="50"
                 x2="50"
                 y2="12"
-                stroke="#737373"
+                stroke="var(--site-clock-second)"
                 strokeWidth="0.5"
                 strokeLinecap="round"
                 transform={`rotate(${secondDeg} 50 50)`}
@@ -159,33 +159,33 @@ export default function TimePage() {
             </svg>
           </div>
 
-          <p className="text-lg font-light text-gray-400 text-center">
+          <p className="text-center text-lg font-light text-[color:var(--site-text)]">
             {currentMoment}
           </p>
 
           <div className="w-full max-w-xs space-y-2">
-            <p className="text-sm font-light text-gray-500 text-center">
+            <p className="text-center text-sm font-light text-[color:var(--site-muted)]">
               {Math.round(dayProgress)}% through the day
             </p>
-            <div className="h-1 bg-gray-800 overflow-hidden">
+            <div className="h-1 overflow-hidden bg-[color:var(--site-border)]">
               <div
-                className="h-full bg-gray-500 transition-all duration-1000"
+                className="h-full bg-[color:var(--site-muted)] transition-all duration-1000"
                 style={{ width: `${dayProgress}%` }}
               />
             </div>
           </div>
 
-          <p className="text-sm font-light text-gray-500 text-center">
+          <p className="text-center text-sm font-light text-[color:var(--site-muted)]">
             Day {dayOfYear} of {daysInYear}
           </p>
 
-          <p className="text-base font-light text-gray-400 text-center italic max-w-md">
+          <p className="max-w-md text-center text-base font-light italic text-[color:var(--site-text)]">
             "{quotes[quoteIndex]}"
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-light tracking-tight mb-8 text-center text-gray-100">
+          <h2 className="mb-8 text-center text-xl font-light tracking-tight text-[color:var(--site-heading)]">
             World time
           </h2>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -195,9 +195,9 @@ export default function TimePage() {
                 type="button"
                 onClick={() => setSelectedCity(city)}
                 aria-label={`Open ${city.name} details`}
-                className="relative overflow-hidden rounded-sm aspect-[4/3] bg-gradient-to-br from-gray-800 to-gray-900 cursor-pointer focus:outline-none focus:ring-1 focus:ring-gray-500"
+                className="relative aspect-[4/3] cursor-pointer overflow-hidden rounded-sm bg-gradient-to-br focus:outline-none focus:ring-1 focus:ring-[color:var(--site-muted)]"
                 style={{
-                  backgroundImage: `url(${city.image}), linear-gradient(to bottom right, rgb(31 41 55), rgb(17 24 39))`,
+                  backgroundImage: `url(${city.image}), linear-gradient(to bottom right, var(--site-card-gradient-from), var(--site-card-gradient-to))`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
@@ -223,12 +223,12 @@ export default function TimePage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             onClick={() => setSelectedCity(null)}
           >
-            <div className="absolute inset-0 bg-black/90" />
+            <div className="absolute inset-0 bg-[color:var(--site-overlay)]" />
             <div
-              className="relative w-full max-w-2xl aspect-[4/3] overflow-hidden rounded-sm bg-gradient-to-br from-gray-800 to-gray-900"
+              className="relative aspect-[4/3] w-full max-w-2xl overflow-hidden rounded-sm bg-gradient-to-br"
               onClick={(e) => e.stopPropagation()}
               style={{
-                backgroundImage: `url(${selectedCity.image}), linear-gradient(to bottom right, rgb(31 41 55), rgb(17 24 39))`,
+                backgroundImage: `url(${selectedCity.image}), linear-gradient(to bottom right, var(--site-card-gradient-from), var(--site-card-gradient-to))`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}

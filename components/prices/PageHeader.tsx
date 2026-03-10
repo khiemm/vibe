@@ -16,9 +16,9 @@ function formatGeneratedAt(generatedAt: string): string {
 export default function PageHeader({ generatedAt }: PageHeaderProps) {
   return (
     <header className="space-y-3 text-center">
-      <h1 className="text-3xl font-light tracking-tight text-gray-100">Daily Commodity Prices</h1>
-      <p className="text-sm font-light text-gray-400">Daily ISR snapshot</p>
-      <p className="text-xs font-light text-gray-500">Generated at {formatGeneratedAt(generatedAt)} UTC</p>
+      <h1 className="text-3xl font-light tracking-tight text-[color:var(--site-heading)]">Daily Commodity Prices</h1>
+      <p className="text-sm font-light text-[color:var(--site-text)]">Daily ISR snapshot</p>
+      <p className="text-xs font-light text-[color:var(--site-muted)]">Generated at {formatGeneratedAt(generatedAt)} UTC</p>
     </header>
   )
 }

@@ -33,10 +33,10 @@ export default function Compare({
 
   return (
     <section className="mt-6 grid gap-4 md:grid-cols-2">
-      <div className="border border-gray-800 bg-gray-900/30 p-4">
-        <h3 className="text-xs uppercase tracking-[0.12em] text-gray-400">{leftTitle}</h3>
+      <div className="border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-4">
+        <h3 className="text-xs uppercase tracking-[0.12em] text-[color:var(--site-muted)]">{leftTitle}</h3>
         {hasLeftContent ? (
-          <div className="mt-2 text-sm leading-relaxed text-gray-300">
+          <div className="mt-2 text-sm leading-relaxed text-[color:var(--site-text)]">
             {left}
             {normalizedLeftItems.length > 0 && (
               <ul className="space-y-1">
@@ -48,10 +48,10 @@ export default function Compare({
           </div>
         ) : null}
       </div>
-      <div className="border border-gray-800 bg-gray-900/30 p-4">
-        <h3 className="text-xs uppercase tracking-[0.12em] text-gray-400">{rightTitle}</h3>
+      <div className="border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-4">
+        <h3 className="text-xs uppercase tracking-[0.12em] text-[color:var(--site-muted)]">{rightTitle}</h3>
         {hasRightContent ? (
-          <div className="mt-2 text-sm leading-relaxed text-gray-300">
+          <div className="mt-2 text-sm leading-relaxed text-[color:var(--site-text)]">
             {right}
             {normalizedRightItems.length > 0 && (
               <ul className="space-y-1">

@@ -23,7 +23,7 @@ export default async function PricesPage() {
         <PageHeader generatedAt={data.generatedAt} />
 
         {data.errors.length > 0 && (
-          <section className="border border-amber-700/40 bg-amber-950/20 p-4 rounded-sm">
+          <section className="rounded-sm border border-amber-700/40 bg-amber-500/10 p-4">
             <h2 className="text-sm font-light tracking-tight text-amber-200">Some sources are unavailable</h2>
             <ul className="mt-2 space-y-1">
               {data.errors.map((error) => (
