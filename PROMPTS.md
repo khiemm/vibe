@@ -118,6 +118,53 @@ Apply the changes directly.
 
 ---
 
+## Add English Content Prompt
+
+Add a new English-learning content file in `content/english`.
+
+Content focus:
+
+- Topic: [Required. Example: small talk, job interview, travel English, daily routines.]
+- Grammar: [Optional. Be specific if needed, such as present perfect, conditionals, articles. If omitted, keep the content broader and allow mixed grammar coverage.]
+- Level: [Beginner / Intermediate / Advanced]
+- Tone: [Friendly teacher, concise coach, practical daily-use, exam-focused]
+- Output format: [MDX note, short lesson, checklist, dialogue-based lesson]
+
+Include these sections in the content:
+
+- Main explanation of the topic
+- Grammar explanation tied to the topic when relevant
+- Tips / tricks / common mistakes related to the grammar or topic
+- Pronunciation or listening note when useful
+- Example sentences: [How many and what style]
+- Mini practice: [Optional exercise, rewrite task, fill-in-the-blank, shadowing, speaking prompt]
+
+Optional extras:
+
+- Vocabulary focus: [Optional list of target words or phrases]
+- Common confusion: [Optional comparison such as `say / tell`, `for / since`, `a / the`]
+
+Constraints:
+
+- Keep it file-based
+- Keep structure simple and human-editable
+- Prioritize practical English usage over textbook-heavy explanation unless requested otherwise
+- If `grammar` is omitted, do not force a narrow grammar lesson
+- Prefer clear examples over long theory
+
+Implementation notes:
+[Optional: filename, slug, target audience, desired length, preferred examples.]
+
+Example for tips / tricks:
+
+- Sometimes `her` is pronounced closer to `er` in fast speech
+- Native speakers may reduce sounds in connected speech
+- A grammar rule may be correct formally, but less common in casual conversation
+
+Apply the changes directly.
+
+---
+
 ## Modify Existing Section
 
 You are modifying an existing section of the site.
