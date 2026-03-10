@@ -12,7 +12,7 @@ export default function Home() {
         className="max-w-2xl text-center space-y-6"
       >
         <h1 className="text-4xl md:text-5xl font-light tracking-tight text-[color:var(--site-heading)]">
-          Hello, I'm here.
+          Hello, I&apos;m here.
         </h1>
         <p className="text-lg font-light text-[color:var(--site-muted)]">
           A calm space on the web.

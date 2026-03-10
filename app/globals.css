@@ -22,6 +22,9 @@
   --site-clock-hour: rgb(212 212 212);
   --site-clock-minute: rgb(163 163 163);
   --site-clock-second: rgb(115 115 115);
+  --site-accent: rgb(249 115 22);
+  --site-accent-soft: rgb(249 115 22 / 0.16);
+  --site-accent-cool: rgb(14 165 233);
 }
 
 html[data-theme='light'] {
@@ -43,6 +46,9 @@ html[data-theme='light'] {
   --site-clock-hour: rgb(17 24 39);
   --site-clock-minute: rgb(75 85 99);
   --site-clock-second: rgb(107 114 128);
+  --site-accent: rgb(234 88 12);
+  --site-accent-soft: rgb(234 88 12 / 0.12);
+  --site-accent-cool: rgb(2 132 199);
 }
 
 @layer base {
@@ -58,5 +64,13 @@ html[data-theme='light'] {
     @apply transition-colors;
     background-color: var(--site-bg);
     color: var(--site-text);
+    background-image:
+      radial-gradient(circle at top left, rgb(249 115 22 / 0.08), transparent 22%),
+      radial-gradient(circle at top right, rgb(14 165 233 / 0.07), transparent 18%);
+  }
+
+  ::selection {
+    background-color: var(--site-accent);
+    color: rgb(15 23 42);
   }
 }
