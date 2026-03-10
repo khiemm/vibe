@@ -2,7 +2,7 @@ import 'server-only'
 import type { CommodityPoint, FetchStatus } from '@/lib/prices/types'
 
 const REQUEST_TIMEOUT_MS = 10_000
-const ENABLE_PROVIDER_LOGS = process.env.PRICES_API_LOGS !== '0'
+const ENABLE_PROVIDER_LOGS = process.env.PRICES_API_LOGS === '1'
 
 type ProviderName = 'alpha' | 'fred'
 
