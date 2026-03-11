@@ -1,49 +1,49 @@
-'use client'
+'use client';
 
-import { motion } from 'framer-motion'
-import { useEffect, useMemo, useState } from 'react'
+import { motion } from 'framer-motion';
+import { useEffect, useMemo, useState } from 'react';
 import {
   type AwsSaaPracticeQuestion,
   type AwsSaaQuestionSet,
-} from '@/lib/aws-saa'
+} from '@/lib/aws-saa';
 
-type AnswerMap = Record<number, string[]>
+type AnswerMap = Record<number, string[]>;
 
-const choiceLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-const timerWarningSeconds = 15 * 60
+const choiceLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const timerWarningSeconds = 15 * 60;
 
 function formatTime(totalSeconds: number) {
-  const minutes = Math.floor(totalSeconds / 60)
-  const seconds = totalSeconds % 60
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
 
   return `${minutes.toString().padStart(2, '0')}:${seconds
     .toString()
-    .padStart(2, '0')}`
+    .padStart(2, '0')}`;
 }
 
 function arraysMatch(left: string[], right: string[]) {
   if (left.length !== right.length) {
-    return false
+    return false;
   }
 
-  const leftSorted = [...left].sort()
-  const rightSorted = [...right].sort()
+  const leftSorted = [...left].sort();
+  const rightSorted = [...right].sort();
 
-  return leftSorted.every((value, index) => value === rightSorted[index])
+  return leftSorted.every((value, index) => value === rightSorted[index]);
 }
 
 function selectionLabel(question: AwsSaaPracticeQuestion) {
   if (question.type === 'single') {
-    return 'Choose one.'
+    return 'Choose one.';
   }
 
-  return `Choose ${question.correctOptionIds.length}.`
+  return `Choose ${question.correctOptionIds.length}.`;
 }
 
 export default function PracticeExamPage({
   questionSet,
 }: {
-  questionSet: AwsSaaQuestionSet
+  questionSet: AwsSaaQuestionSet;
 }) {
   const {
     domains,
@@ -52,59 +52,64 @@ export default function PracticeExamPage({
     sourceBasis,
     sourceNote,
     studyTracks,
-  } = questionSet
-  const scoredQuestions = questions.filter((question) => question.scored)
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [answers, setAnswers] = useState<AnswerMap>({})
-  const [flaggedIds, setFlaggedIds] = useState<number[]>([])
-  const [submitted, setSubmitted] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(examBlueprint.durationMinutes * 60)
+  } = questionSet;
+  const scoredQuestions = questions.filter((question) => question.scored);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<AnswerMap>({});
+  const [flaggedIds, setFlaggedIds] = useState<number[]>([]);
+  const [submitted, setSubmitted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(examBlueprint.durationMinutes * 60);
 
-  const currentQuestion = questions[currentIndex]
-  const currentSelections = answers[currentQuestion.id] ?? []
+  const currentQuestion = questions[currentIndex];
+  const currentSelections = answers[currentQuestion.id] ?? [];
 
   useEffect(() => {
-    if (submitted) {
-      return undefined
+    if (submitted || isPaused) {
+      return undefined;
     }
 
     const timer = window.setInterval(() => {
-      setTimeLeft((previous) => Math.max(previous - 1, 0))
-    }, 1000)
+      setTimeLeft((previous) => Math.max(previous - 1, 0));
+    }, 1000);
 
-    return () => window.clearInterval(timer)
-  }, [submitted])
+    return () => window.clearInterval(timer);
+  }, [isPaused, submitted]);
 
   useEffect(() => {
     if (timeLeft === 0 && !submitted) {
-      setSubmitted(true)
+      setSubmitted(true);
     }
-  }, [submitted, timeLeft])
+  }, [submitted, timeLeft]);
 
   const answeredCount = useMemo(
-    () => questions.filter((question) => (answers[question.id] ?? []).length > 0).length,
-    [answers]
-  )
+    () =>
+      questions.filter((question) => (answers[question.id] ?? []).length > 0)
+        .length,
+    [answers],
+  );
 
   const correctCount = useMemo(
     () =>
       scoredQuestions.filter((question) =>
-        arraysMatch(answers[question.id] ?? [], question.correctOptionIds)
+        arraysMatch(answers[question.id] ?? [], question.correctOptionIds),
       ).length,
-    [answers]
-  )
+    [answers],
+  );
 
-  const readinessScore = Math.round((correctCount / scoredQuestions.length) * 100)
+  const readinessScore = Math.round(
+    (correctCount / scoredQuestions.length) * 100,
+  );
 
   const domainResults = useMemo(
     () =>
       domains.map((domain) => {
         const domainQuestions = scoredQuestions.filter(
-          (question) => question.domain === domain.id
-        )
+          (question) => question.domain === domain.id,
+        );
         const domainCorrect = domainQuestions.filter((question) =>
-          arraysMatch(answers[question.id] ?? [], question.correctOptionIds)
-        ).length
+          arraysMatch(answers[question.id] ?? [], question.correctOptionIds),
+        ).length;
 
         return {
           ...domain,
@@ -114,113 +119,119 @@ export default function PracticeExamPage({
             domainQuestions.length === 0
               ? 0
               : Math.round((domainCorrect / domainQuestions.length) * 100),
-        }
+        };
       }),
-    [answers, domains, scoredQuestions]
-  )
+    [answers, domains, scoredQuestions],
+  );
 
   const firstUnansweredIndex = questions.findIndex(
-    (question) => (answers[question.id] ?? []).length === 0
-  )
+    (question) => (answers[question.id] ?? []).length === 0,
+  );
+  const examPaused = isPaused && !submitted;
 
   function toggleFlag(questionId: number) {
+    if (submitted || isPaused) {
+      return;
+    }
+
     setFlaggedIds((previous) =>
       previous.includes(questionId)
         ? previous.filter((id) => id !== questionId)
-        : [...previous, questionId]
-    )
+        : [...previous, questionId],
+    );
   }
 
   function selectOption(question: AwsSaaPracticeQuestion, optionId: string) {
-    if (submitted) {
-      return
+    if (submitted || isPaused) {
+      return;
     }
 
     setAnswers((previous) => {
-      const existing = previous[question.id] ?? []
+      const existing = previous[question.id] ?? [];
 
       if (question.type === 'single') {
         return {
           ...previous,
           [question.id]: [optionId],
-        }
+        };
       }
 
       const nextSelection = existing.includes(optionId)
         ? existing.filter((value) => value !== optionId)
-        : [...existing, optionId]
+        : [...existing, optionId];
 
       return {
         ...previous,
         [question.id]: nextSelection,
-      }
-    })
+      };
+    });
   }
 
   function resetSession() {
-    setAnswers({})
-    setFlaggedIds([])
-    setCurrentIndex(0)
-    setSubmitted(false)
-    setTimeLeft(examBlueprint.durationMinutes * 60)
+    setAnswers({});
+    setFlaggedIds([]);
+    setCurrentIndex(0);
+    setIsPaused(false);
+    setSubmitted(false);
+    setTimeLeft(examBlueprint.durationMinutes * 60);
   }
 
   function paletteStatus(question: AwsSaaPracticeQuestion) {
     if (submitted) {
       const isCorrect = arraysMatch(
         answers[question.id] ?? [],
-        question.correctOptionIds
-      )
+        question.correctOptionIds,
+      );
 
       return isCorrect
         ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-100'
-        : 'border-rose-400/50 bg-rose-500/15 text-rose-100'
+        : 'border-rose-400/50 bg-rose-500/15 text-rose-100';
     }
 
     if (currentQuestion.id === question.id) {
-      return 'border-[color:var(--site-accent)] bg-[color:var(--site-accent-soft)] text-[color:var(--site-heading)]'
+      return 'border-[color:var(--site-accent)] bg-[color:var(--site-accent-soft)] text-[color:var(--site-heading)]';
     }
 
     if (flaggedIds.includes(question.id)) {
-      return 'border-amber-300/50 bg-amber-400/10 text-amber-100'
+      return 'border-amber-300/50 bg-amber-400/10 text-amber-100';
     }
 
     if ((answers[question.id] ?? []).length > 0) {
-      return 'border-white/15 bg-white/10 text-white'
+      return 'border-white/15 bg-white/10 text-white';
     }
 
-    return 'border-white/10 bg-black/10 text-[color:var(--site-muted)]'
+    return 'border-white/10 bg-black/10 text-[color:var(--site-muted)]';
   }
 
   function optionState(question: AwsSaaPracticeQuestion, optionId: string) {
-    const isSelected = (answers[question.id] ?? []).includes(optionId)
+    const isSelected = (answers[question.id] ?? []).includes(optionId);
 
     if (!submitted) {
       return isSelected
         ? 'border-[color:var(--site-accent)] bg-[color:var(--site-accent-soft)] text-[color:var(--site-heading)]'
-        : 'border-white/10 bg-white/[0.04] text-[color:var(--site-text)] hover:bg-white/[0.08]'
+        : 'border-white/10 bg-white/[0.04] text-[color:var(--site-text)] hover:bg-white/[0.08]';
     }
 
-    const isCorrect = question.correctOptionIds.includes(optionId)
+    const isCorrect = question.correctOptionIds.includes(optionId);
 
     if (isCorrect) {
-      return 'border-emerald-400/60 bg-emerald-500/10 text-emerald-50'
+      return 'border-emerald-400/60 bg-emerald-500/10 text-emerald-50';
     }
 
     if (isSelected && !isCorrect) {
-      return 'border-rose-400/60 bg-rose-500/10 text-rose-50'
+      return 'border-rose-400/60 bg-rose-500/10 text-rose-50';
     }
 
-    return 'border-white/10 bg-white/[0.03] text-[color:var(--site-muted)]'
+    return 'border-white/10 bg-white/[0.03] text-[color:var(--site-muted)]';
   }
 
   const currentDomain = domains.find(
-    (domain) => domain.id === currentQuestion.domain
-  )
+    (domain) => domain.id === currentQuestion.domain,
+  );
   const currentQuestionCorrect = arraysMatch(
     answers[currentQuestion.id] ?? [],
-    currentQuestion.correctOptionIds
-  )
+    currentQuestion.correctOptionIds,
+  );
 
   return (
     <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:px-6 lg:px-8">
@@ -246,15 +257,14 @@ export default function PracticeExamPage({
 
             <div className="space-y-3">
               <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.04em] text-[color:var(--site-heading)] sm:text-5xl">
-                Trang luyen thi theo flow exam AWS Solutions Architect
+                AWS Solutions Architect Practice Exam Flow
               </h1>
               <p className="max-w-3xl text-base leading-7 text-[color:var(--site-text)] sm:text-lg">
-                Mo phong cach lam bai kieu exam shell voi timer, question
-                palette, flag for review va phan cham sau khi nop. Noi dung ben
-                trong la 65 cau hoi goc tu bien soan theo blueprint cong khai cua
-                AWS. Set nay gom 50 cau scored theo blueprint va 15 cau
-                calibration de mo phong sat cau truc exam that, khong dung dump
-                cau hoi that.
+                This page mirrors the exam-shell workflow with a timer, question
+                palette, review flags, and post-submit scoring. The set contains
+                65 original questions written against the public AWS blueprint,
+                including 50 scored items and 15 calibration items to stay close
+                to the real exam structure without using leaked exam dumps.
               </p>
             </div>
 
@@ -353,24 +363,55 @@ export default function PracticeExamPage({
                   Live session
                 </div>
                 <div className="mt-2 text-2xl font-semibold text-[color:var(--site-heading)]">
-                  {submitted ? 'Review mode' : 'Exam mode'}
+                  {submitted
+                    ? 'Review mode'
+                    : examPaused
+                      ? 'Paused'
+                      : 'Exam mode'}
                 </div>
               </div>
               <div
                 className={`rounded-2xl border px-4 py-3 text-right ${
-                  timeLeft <= timerWarningSeconds && !submitted
-                    ? 'border-rose-400/40 bg-rose-500/10 text-rose-50'
-                    : 'border-[color:var(--site-accent)]/40 bg-[color:var(--site-accent-soft)] text-[color:var(--site-heading)]'
+                  examPaused
+                    ? 'border-amber-300/40 bg-amber-400/10 text-amber-50'
+                    : timeLeft <= timerWarningSeconds && !submitted
+                      ? 'border-rose-400/40 bg-rose-500/10 text-rose-50'
+                      : 'border-[color:var(--site-accent)]/40 bg-[color:var(--site-accent-soft)] text-[color:var(--site-heading)]'
                 }`}
               >
                 <div className="text-xs uppercase tracking-[0.2em] opacity-70">
-                  Time left
+                  {examPaused ? 'Paused at' : 'Time left'}
                 </div>
                 <div className="mt-1 font-mono text-2xl font-semibold">
                   {formatTime(timeLeft)}
                 </div>
               </div>
             </div>
+
+            {!submitted ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setIsPaused((previous) => !previous)}
+                  aria-pressed={examPaused}
+                  className={`rounded-2xl border px-4 py-3 text-left text-sm font-medium transition ${
+                    examPaused
+                      ? 'border-amber-300/50 bg-amber-400/10 text-amber-50 hover:bg-amber-400/15'
+                      : 'border-white/10 bg-white/[0.04] text-[color:var(--site-heading)] hover:border-[color:var(--site-accent)] hover:bg-white/[0.08]'
+                  }`}
+                >
+                  {examPaused
+                    ? 'Resume this mock exam'
+                    : 'Pause this mock exam'}
+                </button>
+
+                <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-6 text-[color:var(--site-muted)]">
+                  Temporarily stops the timer so you can handle interruptions.
+                  This is a convenience control and is not part of the real AWS
+                  exam.
+                </div>
+              </div>
+            ) : null}
 
             <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
               <div className="flex items-center justify-between text-sm text-[color:var(--site-muted)]">
@@ -396,8 +437,8 @@ export default function PracticeExamPage({
               <div className="mt-4 space-y-3">
                 {domains.map((domain) => {
                   const questionCount = questions.filter(
-                    (question) => question.domain === domain.id
-                  ).length
+                    (question) => question.domain === domain.id,
+                  ).length;
 
                   return (
                     <div key={domain.id} className="space-y-2">
@@ -416,12 +457,13 @@ export default function PracticeExamPage({
                       </div>
                       <div className="flex items-center justify-between text-xs text-[color:var(--site-muted)]">
                         <span>
-                          {domain.scoredQuestions} scored / {questionCount} total
+                          {domain.scoredQuestions} scored / {questionCount}{' '}
+                          total
                         </span>
                         <span>official weight {domain.weight}%</span>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -458,9 +500,10 @@ export default function PracticeExamPage({
                   key={question.id}
                   type="button"
                   onClick={() => setCurrentIndex(index)}
+                  disabled={examPaused}
                   className={`rounded-2xl border px-3 py-4 text-sm font-semibold transition ${paletteStatus(
-                    question
-                  )}`}
+                    question,
+                  )} ${examPaused ? 'cursor-not-allowed opacity-45' : ''}`}
                 >
                   {question.id}
                 </button>
@@ -486,7 +529,8 @@ export default function PracticeExamPage({
               <button
                 type="button"
                 onClick={() => setCurrentIndex(firstUnansweredIndex)}
-                className="mt-4 w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-white/[0.08]"
+                disabled={examPaused}
+                className="mt-4 w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Jump to first unanswered
               </button>
@@ -547,17 +591,25 @@ export default function PracticeExamPage({
               <button
                 type="button"
                 onClick={() => toggleFlag(currentQuestion.id)}
+                disabled={examPaused}
                 className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${
                   flaggedIds.includes(currentQuestion.id)
                     ? 'border-amber-300/50 bg-amber-400/10 text-amber-50'
                     : 'border-white/10 bg-white/[0.04] text-[color:var(--site-heading)] hover:border-[color:var(--site-accent)] hover:bg-white/[0.08]'
-                }`}
+                } ${examPaused ? 'cursor-not-allowed opacity-45' : ''}`}
               >
                 {flaggedIds.includes(currentQuestion.id)
                   ? 'Flagged for review'
                   : 'Mark for review'}
               </button>
             </div>
+
+            {examPaused ? (
+              <div className="mt-6 rounded-[28px] border border-amber-300/30 bg-amber-400/10 p-5 text-sm leading-6 text-amber-50">
+                This session is paused. The timer is stopped and exam actions
+                remain locked until you resume.
+              </div>
+            ) : null}
 
             {submitted ? (
               <div className="space-y-6 pt-6">
@@ -575,9 +627,9 @@ export default function PracticeExamPage({
                       </div>
                     </div>
                     <p className="mt-4 text-sm leading-6 text-[color:var(--site-text)]">
-                      Day la readiness score dua tren 50 cau scored. 15 cau
-                      calibration duoc chen vao de page giong shell exam that
-                      hon, nhung khong duoc tinh vao readiness score.
+                      This readiness score is based on the 50 scored questions.
+                      The 15 calibration items make the page feel closer to the
+                      real exam shell, but they are excluded from the score.
                     </p>
                   </div>
 
@@ -650,17 +702,18 @@ export default function PracticeExamPage({
 
             <div className="mt-6 space-y-3">
               {currentQuestion.options.map((option, index) => {
-                const isSelected = currentSelections.includes(option.id)
+                const isSelected = currentSelections.includes(option.id);
 
                 return (
                   <button
                     key={option.id}
                     type="button"
                     onClick={() => selectOption(currentQuestion, option.id)}
+                    disabled={examPaused}
                     className={`flex w-full items-start gap-4 rounded-[24px] border px-4 py-4 text-left transition ${optionState(
                       currentQuestion,
-                      option.id
-                    )}`}
+                      option.id,
+                    )} ${examPaused ? 'cursor-not-allowed opacity-45' : ''}`}
                   >
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border text-sm font-semibold ${
@@ -671,9 +724,11 @@ export default function PracticeExamPage({
                     >
                       {choiceLetters[index]}
                     </div>
-                    <div className="pt-0.5 text-base leading-7">{option.text}</div>
+                    <div className="pt-0.5 text-base leading-7">
+                      {option.text}
+                    </div>
                   </button>
-                )
+                );
               })}
             </div>
 
@@ -681,8 +736,10 @@ export default function PracticeExamPage({
               <div className="flex flex-wrap gap-3">
                 <button
                   type="button"
-                  onClick={() => setCurrentIndex((previous) => Math.max(previous - 1, 0))}
-                  disabled={currentIndex === 0}
+                  onClick={() =>
+                    setCurrentIndex((previous) => Math.max(previous - 1, 0))
+                  }
+                  disabled={currentIndex === 0 || examPaused}
                   className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Previous
@@ -691,10 +748,10 @@ export default function PracticeExamPage({
                   type="button"
                   onClick={() =>
                     setCurrentIndex((previous) =>
-                      Math.min(previous + 1, questions.length - 1)
+                      Math.min(previous + 1, questions.length - 1),
                     )
                   }
-                  disabled={currentIndex === questions.length - 1}
+                  disabled={currentIndex === questions.length - 1 || examPaused}
                   className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Next
@@ -713,6 +770,7 @@ export default function PracticeExamPage({
                 <button
                   type="button"
                   onClick={() => setSubmitted(true)}
+                  disabled={examPaused}
                   className="rounded-2xl border border-[color:var(--site-accent)] bg-[color:var(--site-accent)] px-5 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90"
                 >
                   Submit this mock exam
@@ -723,5 +781,5 @@ export default function PracticeExamPage({
         </section>
       </motion.div>
     </main>
-  )
+  );
 }
