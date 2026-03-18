@@ -313,8 +313,8 @@ export default function PracticeExamPage({
         question.correctOptionIds,
       );
       const base = isCorrect
-        ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-100'
-        : 'border-rose-400/50 bg-rose-500/15 text-rose-100';
+        ? 'border-emerald-500/45 bg-emerald-500/12 text-[color:var(--site-heading)]'
+        : 'border-rose-500/45 bg-rose-500/12 text-[color:var(--site-heading)]';
       return `${base}${dimmed ? ' opacity-20' : ''}`;
     }
 
@@ -323,14 +323,14 @@ export default function PracticeExamPage({
     }
 
     if (flaggedIds.includes(question.id)) {
-      return `border-amber-300/50 bg-amber-400/10 text-amber-100${dimmed ? ' opacity-20' : ''}`;
+      return `border-amber-400/50 bg-amber-400/12 text-[color:var(--site-heading)]${dimmed ? ' opacity-20' : ''}`;
     }
 
     if ((answers[question.id] ?? []).length > 0) {
-      return `border-white/15 bg-white/10 text-white${dimmed ? ' opacity-20' : ''}`;
+      return `border-[color:var(--site-border)] bg-[color:var(--site-surface-hover)] text-[color:var(--site-heading)]${dimmed ? ' opacity-20' : ''}`;
     }
 
-    return `border-white/10 bg-black/10 text-[color:var(--site-muted)]${dimmed ? ' opacity-20' : ''}`;
+    return `border-[color:var(--site-border)] bg-[color:var(--site-surface)] text-[color:var(--site-muted)]${dimmed ? ' opacity-20' : ''}`;
   }
 
   function optionState(question: AwsExamPracticeQuestion, optionId: string) {
@@ -339,19 +339,20 @@ export default function PracticeExamPage({
     if (!submitted) {
       return isSelected
         ? 'border-[color:var(--site-accent)] bg-[color:var(--site-accent-soft)] text-[color:var(--site-heading)]'
-        : 'border-white/10 bg-white/[0.04] text-[color:var(--site-text)] hover:bg-white/[0.08]';
+        : 'border-[color:var(--site-border)] bg-[color:var(--site-surface)] text-[color:var(--site-text)] hover:bg-[color:var(--site-surface-hover)]';
     }
 
     const isCorrect = question.correctOptionIds.includes(optionId);
     if (isCorrect)
-      return 'border-emerald-400/60 bg-emerald-500/10 text-emerald-50';
-    if (isSelected) return 'border-rose-400/60 bg-rose-500/10 text-rose-50';
-    return 'border-white/10 bg-white/[0.03] text-[color:var(--site-muted)]';
+      return 'border-emerald-500/45 bg-emerald-500/12 text-[color:var(--site-heading)]';
+    if (isSelected)
+      return 'border-rose-500/45 bg-rose-500/12 text-[color:var(--site-heading)]';
+    return 'border-[color:var(--site-border)] bg-[color:var(--site-surface)] text-[color:var(--site-text)]';
   }
 
   return (
     <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:px-6 lg:px-8">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.18),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(14,165,233,0.16),_transparent_26%),linear-gradient(180deg,_rgba(15,23,42,0.96),_rgba(2,6,23,1))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(249,115,22,0.16),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(14,165,233,0.14),_transparent_24%),linear-gradient(180deg,var(--site-surface),var(--site-bg))]" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
       <motion.div
@@ -361,10 +362,10 @@ export default function PracticeExamPage({
         className="relative mx-auto flex w-full max-w-7xl flex-col gap-6"
       >
         {/* ── Header card ── */}
-        <section className="grid gap-4 rounded-[32px] border border-white/10 bg-black/20 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur xl:grid-cols-[1.25fr_0.75fr] xl:p-8">
+        <section className="grid gap-4 rounded-[32px] border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.18)] backdrop-blur xl:grid-cols-[1.25fr_0.75fr] xl:p-8">
           <div className="space-y-5">
             <div className="flex flex-wrap gap-2 text-xs uppercase tracking-[0.24em] text-[color:var(--site-muted)]">
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+              <span className="rounded-full border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/35 px-3 py-1 text-[color:var(--site-text)]">
                 {labLabel}
               </span>
               <span className="rounded-full border border-[color:var(--site-accent)]/40 bg-[color:var(--site-accent-soft)] px-3 py-1 text-[color:var(--site-accent)]">
@@ -382,54 +383,54 @@ export default function PracticeExamPage({
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+              <div className="rounded-3xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/38 p-4">
                 <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
                   Official shell
                 </div>
                 <div className="mt-2 text-3xl font-semibold text-[color:var(--site-heading)]">
                   {examBlueprint.totalQuestions}
                 </div>
-                <p className="mt-2 text-sm text-[color:var(--site-muted)]">
+                <p className="mt-2 text-sm text-[color:var(--site-text)]">
                   questions in the live exam shell
                 </p>
               </div>
-              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+              <div className="rounded-3xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/38 p-4">
                 <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
                   Scored core
                 </div>
                 <div className="mt-2 text-3xl font-semibold text-[color:var(--site-heading)]">
                   {examBlueprint.scoredQuestions}
                 </div>
-                <p className="mt-2 text-sm text-[color:var(--site-muted)]">
+                <p className="mt-2 text-sm text-[color:var(--site-text)]">
                   used for readiness scoring
                 </p>
               </div>
-              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+              <div className="rounded-3xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/38 p-4">
                 <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
                   Calibration
                 </div>
                 <div className="mt-2 text-3xl font-semibold text-[color:var(--site-heading)]">
                   {examBlueprint.unscoredQuestions}
                 </div>
-                <p className="mt-2 text-sm text-[color:var(--site-muted)]">
+                <p className="mt-2 text-sm text-[color:var(--site-text)]">
                   extra items for exam realism
                 </p>
               </div>
-              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+              <div className="rounded-3xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/38 p-4">
                 <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
                   Target score
                 </div>
                 <div className="mt-2 text-3xl font-semibold text-[color:var(--site-heading)]">
                   {examBlueprint.targetScore}
                 </div>
-                <p className="mt-2 text-sm text-[color:var(--site-muted)]">
+                <p className="mt-2 text-sm text-[color:var(--site-text)]">
                   on the {examBlueprint.scoreRange} scale
                 </p>
               </div>
             </div>
 
             <div className="grid gap-3 lg:grid-cols-[1.2fr_0.8fr]">
-              <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-5">
+              <div className="rounded-[28px] border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-5">
                 <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
                   Study tracks
                 </div>
@@ -437,7 +438,7 @@ export default function PracticeExamPage({
                   {studyTracks.map((track) => (
                     <div
                       key={track}
-                      className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-6 text-[color:var(--site-text)]"
+                      className="rounded-2xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/50 px-4 py-3 text-sm leading-6 text-[color:var(--site-text)]"
                     >
                       {track}
                     </div>
@@ -445,7 +446,7 @@ export default function PracticeExamPage({
                 </div>
               </div>
 
-              <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-5">
+              <div className="rounded-[28px] border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-5">
                 <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
                   Source basis
                 </div>
@@ -456,7 +457,7 @@ export default function PracticeExamPage({
                   {sourceBasis.map((source) => (
                     <a
                       key={source.url}
-                      className="block rounded-2xl border border-white/10 px-4 py-3 text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-white/[0.04]"
+                      className="block rounded-2xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/30 px-4 py-3 text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-[color:var(--site-surface-hover)]"
                       href={source.url}
                       rel="noreferrer"
                       target="_blank"
@@ -470,7 +471,7 @@ export default function PracticeExamPage({
           </div>
 
           {/* ── Session sidebar ── */}
-          <aside className="flex flex-col gap-4 rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-5">
+          <aside className="flex flex-col gap-4 rounded-[28px] border border-[color:var(--site-border)] bg-[linear-gradient(180deg,var(--site-surface),var(--site-bg))] p-5">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
@@ -487,9 +488,9 @@ export default function PracticeExamPage({
               <div
                 className={`rounded-2xl border px-4 py-3 text-right ${
                   examPaused
-                    ? 'border-amber-300/40 bg-amber-400/10 text-amber-50'
+                    ? 'border-amber-400/45 bg-amber-400/14 text-[color:var(--site-heading)]'
                     : timeLeft <= timerWarningSeconds && !submitted
-                      ? 'border-rose-400/40 bg-rose-500/10 text-rose-50'
+                      ? 'border-rose-500/45 bg-rose-500/12 text-[color:var(--site-heading)]'
                       : 'border-[color:var(--site-accent)]/40 bg-[color:var(--site-accent-soft)] text-[color:var(--site-heading)]'
                 }`}
               >
@@ -510,15 +511,15 @@ export default function PracticeExamPage({
                   aria-pressed={examPaused}
                   className={`rounded-2xl border px-4 py-3 text-left text-sm font-medium transition ${
                     examPaused
-                      ? 'border-amber-300/50 bg-amber-400/10 text-amber-50 hover:bg-amber-400/15'
-                      : 'border-white/10 bg-white/[0.04] text-[color:var(--site-heading)] hover:border-[color:var(--site-accent)] hover:bg-white/[0.08]'
+                      ? 'border-amber-400/50 bg-amber-400/14 text-[color:var(--site-heading)] hover:bg-amber-400/18'
+                      : 'border-[color:var(--site-border)] bg-[color:var(--site-surface)] text-[color:var(--site-heading)] hover:border-[color:var(--site-accent)] hover:bg-[color:var(--site-surface-hover)]'
                   }`}
                 >
                   {examPaused
                     ? 'Resume this mock exam'
                     : 'Pause this mock exam'}
                 </button>
-                <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-6 text-[color:var(--site-muted)]">
+                <div className="rounded-2xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/50 px-4 py-3 text-sm leading-6 text-[color:var(--site-text)]">
                   Temporarily stops the timer so you can handle interruptions.
                   This is a convenience control and is not part of the real AWS
                   exam.
@@ -526,7 +527,7 @@ export default function PracticeExamPage({
               </div>
             ) : null}
 
-            <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
+            <div className="rounded-3xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/50 p-4">
               <div className="flex items-center justify-between text-sm text-[color:var(--site-muted)]">
                 <span>Completion</span>
                 <span>
@@ -543,7 +544,7 @@ export default function PracticeExamPage({
               </div>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
+            <div className="rounded-3xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/50 p-4">
               <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
                 Domain weights
               </div>
@@ -579,7 +580,7 @@ export default function PracticeExamPage({
               </div>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-black/20 p-4">
+            <div className="rounded-3xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/50 p-4">
               <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
                 Keyboard shortcuts
               </div>
@@ -602,17 +603,61 @@ export default function PracticeExamPage({
             <button
               type="button"
               onClick={resetSession}
-              className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-white/[0.08]"
+              className="rounded-2xl border border-[color:var(--site-border)] bg-[color:var(--site-surface)] px-4 py-3 text-left text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-[color:var(--site-surface-hover)]"
             >
               Reset this timed block
             </button>
           </aside>
         </section>
 
+        {submitted ? (
+          <section className="grid gap-4 rounded-[30px] border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur sm:p-6 xl:grid-cols-[1.05fr_1.95fr]">
+            <div className="rounded-[28px] border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/50 p-5">
+              <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
+                Score result
+              </div>
+              <div className="mt-2 flex items-end gap-3">
+                <div className="text-5xl font-semibold tracking-[-0.04em] text-[color:var(--site-heading)]">
+                  {readinessScore}%
+                </div>
+                <div className="pb-2 text-sm text-[color:var(--site-text)]">
+                  {correctCount}/{scoredQuestions.length} scored correct
+                </div>
+              </div>
+              <p className="mt-4 text-sm leading-6 text-[color:var(--site-text)]">
+                This readiness score is based on the{' '}
+                {examBlueprint.scoredQuestions} scored questions. The{' '}
+                {examBlueprint.unscoredQuestions} calibration items make the
+                page feel closer to the real exam shell but are excluded from
+                the score.
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {domainResults.map((domain) => (
+                <div
+                  key={domain.id}
+                  className="rounded-[24px] border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/45 p-4"
+                >
+                  <div className="text-sm font-medium text-[color:var(--site-heading)]">
+                    {domain.name}
+                  </div>
+                  <div className="mt-2 text-3xl font-semibold text-[color:var(--site-heading)]">
+                    {domain.percentage}%
+                  </div>
+                  <div className="mt-2 text-sm text-[color:var(--site-text)]">
+                    {domain.correct}/{domain.total} correct
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         {/* ── Question area ── */}
         <section className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
           {/* Palette */}
-          <aside className="rounded-[30px] border border-white/10 bg-black/25 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.28)] backdrop-blur">
+          <aside className="rounded-[30px] border border-[color:var(--site-border)] bg-[color:var(--site-surface)] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
@@ -622,7 +667,7 @@ export default function PracticeExamPage({
                   {submitted ? 'Answer review' : 'Jump panel'}
                 </div>
               </div>
-              <div className="rounded-full border border-white/10 px-3 py-1 text-xs text-[color:var(--site-muted)]">
+              <div className="rounded-full border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/35 px-3 py-1 text-xs text-[color:var(--site-text)]">
                 {questions.length} items
               </div>
             </div>
@@ -635,7 +680,7 @@ export default function PracticeExamPage({
                 className={`rounded-full border px-3 py-1 text-xs transition ${
                   domainFilter === null
                     ? 'border-[color:var(--site-accent)] bg-[color:var(--site-accent-soft)] text-[color:var(--site-heading)]'
-                    : 'border-white/10 bg-white/[0.04] text-[color:var(--site-muted)] hover:border-white/20'
+                    : 'border-[color:var(--site-border)] bg-[color:var(--site-surface)] text-[color:var(--site-text)] hover:border-[color:var(--site-accent)]'
                 }`}
               >
                 All
@@ -652,7 +697,7 @@ export default function PracticeExamPage({
                   className={`rounded-full border px-3 py-1 text-xs transition ${
                     domainFilter === domain.id
                       ? 'border-[color:var(--site-accent)] bg-[color:var(--site-accent-soft)] text-[color:var(--site-heading)]'
-                      : 'border-white/10 bg-white/[0.04] text-[color:var(--site-muted)] hover:border-white/20'
+                      : 'border-[color:var(--site-border)] bg-[color:var(--site-surface)] text-[color:var(--site-text)] hover:border-[color:var(--site-accent)]'
                   }`}
                 >
                   {domain.name.split(' ').slice(-1)[0]}
@@ -667,14 +712,14 @@ export default function PracticeExamPage({
                   type="button"
                   onClick={() => setCurrentIndex(index)}
                   disabled={examPaused}
-                  className={`rounded-2xl border px-3 py-4 text-sm font-semibold transition ${paletteStatus(question)} ${examPaused ? 'cursor-not-allowed opacity-45' : ''}`}
+                  className={`rounded-2xl border px-3 py-4 text-sm font-semibold transition ${paletteStatus(question)} ${examPaused ? 'cursor-not-allowed opacity-80' : ''}`}
                 >
                   {question.id}
                 </button>
               ))}
             </div>
 
-            <div className="mt-5 space-y-3 rounded-3xl border border-white/10 bg-white/[0.04] p-4 text-sm text-[color:var(--site-text)]">
+            <div className="mt-5 space-y-3 rounded-3xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/45 p-4 text-sm text-[color:var(--site-text)]">
               <div className="flex items-center justify-between">
                 <span>Answered</span>
                 <span>{answeredCount}</span>
@@ -694,23 +739,23 @@ export default function PracticeExamPage({
                 type="button"
                 onClick={() => setCurrentIndex(firstUnansweredIndex)}
                 disabled={examPaused}
-                className="mt-4 w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40"
+                className="mt-4 w-full rounded-2xl border border-[color:var(--site-border)] bg-[color:var(--site-surface)] px-4 py-3 text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-[color:var(--site-surface-hover)] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Jump to first unanswered
               </button>
             ) : null}
 
-            <div className="mt-6 space-y-2 text-xs uppercase tracking-[0.18em] text-[color:var(--site-muted)]">
+              <div className="mt-6 space-y-2 text-xs uppercase tracking-[0.18em] text-[color:var(--site-muted)]">
               <div className="flex items-center gap-2">
                 <span className="h-3 w-3 rounded-full border border-[color:var(--site-accent)] bg-[color:var(--site-accent-soft)]" />
                 Current
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full border border-amber-300/50 bg-amber-400/10" />
+                <span className="h-3 w-3 rounded-full border border-amber-400/50 bg-amber-400/14" />
                 Flagged
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full border border-white/20 bg-white/10" />
+                <span className="h-3 w-3 rounded-full border border-[color:var(--site-border)] bg-[color:var(--site-surface-hover)]" />
                 Answered
               </div>
               {submitted ? (
@@ -729,134 +774,93 @@ export default function PracticeExamPage({
           </aside>
 
           {/* Question card */}
-          <section className="rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.28)] backdrop-blur sm:p-6">
-            <div className="flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-start sm:justify-between">
-              <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
-                  <span>
-                    Question {currentQuestion.id} of {questions.length}
-                  </span>
-                  <span className="rounded-full border border-white/10 px-2 py-1">
-                    {currentDomain?.name}
-                  </span>
-                  <span className="rounded-full border border-white/10 px-2 py-1">
-                    {selectionLabel(currentQuestion)}
-                  </span>
-                  {!currentQuestion.scored && submitted ? (
-                    <span className="rounded-full border border-sky-300/40 bg-sky-500/10 px-2 py-1 text-sky-100">
-                      Calibration item
+          <div className="space-y-4">
+            <section className="rounded-[30px] border border-[color:var(--site-border)] bg-[linear-gradient(180deg,var(--site-surface),var(--site-bg))] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur sm:p-6">
+              <div className="flex flex-col gap-4 border-b border-[color:var(--site-border)] pb-5 sm:flex-row sm:items-start sm:justify-between">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
+                    <span>
+                      Question {currentQuestion.id} of {questions.length}
                     </span>
-                  ) : null}
-                </div>
-                <h2 className="max-w-4xl text-2xl font-semibold tracking-[-0.03em] text-[color:var(--site-heading)] sm:text-3xl">
-                  {currentQuestion.prompt}
-                </h2>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => toggleFlag(currentQuestion.id)}
-                disabled={examPaused || submitted}
-                className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${
-                  flaggedIds.includes(currentQuestion.id)
-                    ? 'border-amber-300/50 bg-amber-400/10 text-amber-50'
-                    : 'border-white/10 bg-white/[0.04] text-[color:var(--site-heading)] hover:border-[color:var(--site-accent)] hover:bg-white/[0.08]'
-                } ${examPaused ? 'cursor-not-allowed opacity-45' : ''}`}
-              >
-                {flaggedIds.includes(currentQuestion.id)
-                  ? 'Flagged for review'
-                  : 'Mark for review'}
-              </button>
-            </div>
-
-            {examPaused ? (
-              <div className="mt-6 rounded-[28px] border border-amber-300/30 bg-amber-400/10 p-5 text-sm leading-6 text-amber-50">
-                This session is paused. The timer is stopped and exam actions
-                remain locked until you resume.
-              </div>
-            ) : null}
-
-            {submitted ? (
-              <div className="space-y-6 pt-6">
-                <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-                  <div className="rounded-[28px] border border-white/10 bg-black/20 p-5">
-                    <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--site-muted)]">
-                      Practice score
-                    </div>
-                    <div className="mt-2 flex items-end gap-3">
-                      <div className="text-5xl font-semibold tracking-[-0.04em] text-[color:var(--site-heading)]">
-                        {readinessScore}%
-                      </div>
-                      <div className="pb-2 text-sm text-[color:var(--site-muted)]">
-                        {correctCount}/{scoredQuestions.length} scored correct
-                      </div>
-                    </div>
-                    <p className="mt-4 text-sm leading-6 text-[color:var(--site-text)]">
-                      This readiness score is based on the{' '}
-                      {examBlueprint.scoredQuestions} scored questions. The{' '}
-                      {examBlueprint.unscoredQuestions} calibration items make
-                      the page feel closer to the real exam shell but are
-                      excluded from the score.
-                    </p>
+                    <span className="rounded-full border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/40 px-2 py-1 text-[color:var(--site-text)]">
+                      {currentDomain?.name}
+                    </span>
+                    <span className="rounded-full border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/40 px-2 py-1 text-[color:var(--site-text)]">
+                      {selectionLabel(currentQuestion)}
+                    </span>
+                    {!currentQuestion.scored && submitted ? (
+                      <span className="rounded-full border border-sky-300/40 bg-sky-500/10 px-2 py-1 text-sky-100">
+                        Calibration item
+                      </span>
+                    ) : null}
                   </div>
-
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {domainResults.map((domain) => (
-                      <div
-                        key={domain.id}
-                        className="rounded-[24px] border border-white/10 bg-white/[0.04] p-4"
-                      >
-                        <div className="text-sm font-medium text-[color:var(--site-heading)]">
-                          {domain.name}
-                        </div>
-                        <div className="mt-2 text-3xl font-semibold text-[color:var(--site-heading)]">
-                          {domain.percentage}%
-                        </div>
-                        <div className="mt-2 text-sm text-[color:var(--site-muted)]">
-                          {domain.correct}/{domain.total} correct
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <h2 className="max-w-4xl text-2xl font-semibold tracking-[-0.03em] text-[color:var(--site-heading)] sm:text-3xl">
+                    {currentQuestion.prompt}
+                  </h2>
                 </div>
 
-                <div
-                  className={`rounded-[28px] border p-5 ${currentQuestionCorrect ? 'border-emerald-400/30 bg-emerald-500/[0.08]' : 'border-rose-400/30 bg-rose-500/[0.08]'}`}
+                <button
+                  type="button"
+                  onClick={() => toggleFlag(currentQuestion.id)}
+                  disabled={examPaused || submitted}
+                  className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${
+                    flaggedIds.includes(currentQuestion.id)
+                      ? 'border-amber-400/50 bg-amber-400/14 text-[color:var(--site-heading)]'
+                      : 'border-[color:var(--site-border)] bg-[color:var(--site-surface)] text-[color:var(--site-heading)] hover:border-[color:var(--site-accent)] hover:bg-[color:var(--site-surface-hover)]'
+                  } ${examPaused ? 'cursor-not-allowed opacity-80' : ''}`}
                 >
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div
-                      className={`rounded-full px-3 py-1 text-xs uppercase tracking-[0.18em] ${currentQuestionCorrect ? 'bg-emerald-500/15 text-emerald-100' : 'bg-rose-500/15 text-rose-100'}`}
-                    >
-                      {currentQuestionCorrect ? 'Correct' : 'Needs review'}
+                  {flaggedIds.includes(currentQuestion.id)
+                    ? 'Flagged for review'
+                    : 'Mark for review'}
+                </button>
+              </div>
+
+              {examPaused ? (
+                <div className="mt-6 rounded-[28px] border border-amber-400/40 bg-amber-400/14 p-5 text-sm leading-6 text-[color:var(--site-heading)]">
+                  This session is paused. The timer is stopped and exam actions
+                  remain locked until you resume.
+                </div>
+              ) : null}
+
+              {submitted ? (
+                <div className="space-y-6 pt-6">
+                  <div
+                    className={`rounded-[28px] border p-5 ${currentQuestionCorrect ? 'border-emerald-500/35 bg-emerald-500/[0.10]' : 'border-rose-500/35 bg-rose-500/[0.10]'}`}
+                  >
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div
+                        className={`rounded-full border px-3 py-1 text-xs uppercase tracking-[0.18em] ${currentQuestionCorrect ? 'border-emerald-500/35 bg-emerald-500/15 text-[color:var(--site-heading)]' : 'border-rose-500/35 bg-rose-500/15 text-[color:var(--site-heading)]'}`}
+                      >
+                        {currentQuestionCorrect ? 'Correct' : 'Needs review'}
+                      </div>
+                      <div className="text-sm text-[color:var(--site-text)]">
+                        Correct answer:{' '}
+                        <span className="font-medium text-[color:var(--site-heading)]">
+                          {currentQuestion.correctOptionIds
+                            .map((id) => id.toUpperCase())
+                            .join(', ')}
+                        </span>
+                      </div>
+                      <div className="text-sm text-[color:var(--site-text)]">
+                        Your answer:{' '}
+                        <span className="font-medium text-[color:var(--site-heading)]">
+                          {(answers[currentQuestion.id] ?? []).length > 0
+                            ? (answers[currentQuestion.id] ?? [])
+                                .map((id) => id.toUpperCase())
+                                .join(', ')
+                            : 'No answer'}
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-sm text-[color:var(--site-text)]">
-                      Correct answer:{' '}
-                      <span className="font-medium text-[color:var(--site-heading)]">
-                        {currentQuestion.correctOptionIds
-                          .map((id) => id.toUpperCase())
-                          .join(', ')}
-                      </span>
+                    <div className="mt-5 space-y-4 text-sm leading-7 text-[color:var(--site-text)]">
+                      <p>{currentQuestion.explanation}</p>
+                      <p className="rounded-2xl border border-[color:var(--site-border)] bg-[color:var(--site-bg)]/55 px-4 py-3 text-[color:var(--site-heading)]">
+                        {currentQuestion.takeaway}
+                      </p>
                     </div>
-                    <div className="text-sm text-[color:var(--site-text)]">
-                      Your answer:{' '}
-                      <span className="font-medium text-[color:var(--site-heading)]">
-                        {(answers[currentQuestion.id] ?? []).length > 0
-                          ? (answers[currentQuestion.id] ?? [])
-                              .map((id) => id.toUpperCase())
-                              .join(', ')
-                          : 'No answer'}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mt-5 space-y-4 text-sm leading-7 text-[color:var(--site-text)]">
-                    <p>{currentQuestion.explanation}</p>
-                    <p className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-[color:var(--site-heading)]">
-                      {currentQuestion.takeaway}
-                    </p>
                   </div>
                 </div>
-              </div>
-            ) : null}
+              ) : null}
 
             <div className="mt-6 space-y-3">
               {currentQuestion.options.map((option, index) => {
@@ -867,13 +871,13 @@ export default function PracticeExamPage({
                     type="button"
                     onClick={() => selectOption(currentQuestion, option.id)}
                     disabled={examPaused}
-                    className={`flex w-full items-start gap-4 rounded-[24px] border px-4 py-4 text-left transition ${optionState(currentQuestion, option.id)} ${examPaused ? 'cursor-not-allowed opacity-45' : ''}`}
+                    className={`flex w-full items-start gap-4 rounded-[24px] border px-4 py-4 text-left transition ${optionState(currentQuestion, option.id)} ${examPaused ? 'cursor-not-allowed opacity-85' : ''}`}
                   >
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border text-sm font-semibold ${
                         isSelected && !submitted
                           ? 'border-[color:var(--site-accent)] bg-[color:var(--site-accent)] text-slate-950'
-                          : 'border-white/10 bg-black/20 text-[color:var(--site-heading)]'
+                          : 'border-[color:var(--site-border)] bg-[color:var(--site-bg)]/50 text-[color:var(--site-heading)]'
                       }`}
                     >
                       {choiceLetters[index]}
@@ -886,7 +890,7 @@ export default function PracticeExamPage({
               })}
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-8 flex flex-col gap-3 border-t border-[color:var(--site-border)] pt-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap gap-3">
                 <button
                   type="button"
@@ -894,7 +898,7 @@ export default function PracticeExamPage({
                     setCurrentIndex((prev) => Math.max(prev - 1, 0))
                   }
                   disabled={currentIndex === 0 || examPaused}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-2xl border border-[color:var(--site-border)] bg-[color:var(--site-surface)] px-4 py-3 text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-[color:var(--site-surface-hover)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Previous
                 </button>
@@ -906,7 +910,7 @@ export default function PracticeExamPage({
                     )
                   }
                   disabled={currentIndex === questions.length - 1 || examPaused}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-2xl border border-[color:var(--site-border)] bg-[color:var(--site-surface)] px-4 py-3 text-sm font-medium text-[color:var(--site-heading)] transition hover:border-[color:var(--site-accent)] hover:bg-[color:var(--site-surface-hover)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Next
                 </button>
@@ -931,7 +935,8 @@ export default function PracticeExamPage({
                 </button>
               )}
             </div>
-          </section>
+            </section>
+          </div>
         </section>
       </motion.div>
     </main>
