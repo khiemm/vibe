@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import SiteHeader from '@/components/auth/SiteHeader'
 import GlobalThemeToggle from '@/components/theme/GlobalThemeToggle'
 import ThemeProvider from '@/components/theme/ThemeProvider'
 import './globals.css'
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased bg-[color:var(--site-bg)] text-[color:var(--site-text)] transition-colors`}>
         <ThemeProvider>
           <GlobalThemeToggle />
+          <SiteHeader />
           {children}
         </ThemeProvider>
       </body>

@@ -180,7 +180,7 @@ export default function TimePage() {
           </p>
 
           <p className="max-w-md text-center text-base font-light italic text-[color:var(--site-text)]">
-            "{quotes[quoteIndex]}"
+            &ldquo;{quotes[quoteIndex]}&rdquo;
           </p>
         </section>
 

@@ -7,8 +7,8 @@ calm visual rhythm, spacious layouts, typography-first design, subtle motion.
 
 To keep the codebase stable and prevent over-engineering, two guiding files are used:
 
-- PLAN.md — constraints & architecture boundaries
-- PROMPTS.md — reusable prompt templates for AI-assisted work
+- `PLAN.md` - constraints and architecture boundaries
+- `PROMPTS.md` - reusable prompt templates for AI-assisted work
 
 ---
 
@@ -32,9 +32,9 @@ If a design decision feels excessive, choose the simpler option.
 
 `PLAN.md` defines the boundaries of the project:
 
-- purpose & scope
+- purpose and scope
 - allowed tech stack
-- what must NOT be introduced
+- what must not be introduced
 - design principles
 - rules AI agents must follow
 
@@ -46,7 +46,7 @@ Think of `PLAN.md` as the constitution of the project.
 
 Templates include placeholders wrapped in brackets:
 
-\[like this\]
+`[like this]`
 
 Replace the bracketed text with your specific task before sending the prompt.
 
@@ -57,3 +57,18 @@ Replace the bracketed text with your specific task before sending the prompt.
 - Prefer small, incremental changes
 - Keep components readable and explicit
 - When in doubt: reduce, simplify, remove
+
+---
+
+## Auth
+
+This repo now includes a server-rendered authentication slice designed around:
+
+- Next.js as the backend-for-frontend
+- encrypted HTTP-only cookies
+- Cognito as the identity provider
+- a serverless auth API built with API Gateway, Lambda, DynamoDB, IAM, CloudWatch, SSM, and Secrets Manager
+
+Local development defaults to `AUTH_MODE=mock`, so you can validate the SSR auth flow without touching AWS.
+
+Detailed setup, local testing, and AWS deployment steps live in [docs/cognito-auth.md](docs/cognito-auth.md).

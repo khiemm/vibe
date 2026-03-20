@@ -15,6 +15,7 @@
 # production
 /build
 /storybook-static
+/cdk.out
 
 # misc
 .DS_Store
@@ -25,6 +26,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+dev-auth*.log
 
 # local env files
 .env*.local

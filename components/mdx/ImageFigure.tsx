@@ -13,6 +13,8 @@ export default function ImageFigure({
 }: ImageFigureProps) {
   return (
     <figure className="mt-8 space-y-2">
+      {/* Arbitrary MDX image sources do not always fit Next/Image constraints cleanly. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={alt} className="w-full border border-[color:var(--site-border)] bg-[color:var(--site-surface)]" />
       {(caption || credit) && (
         <figcaption className="text-xs leading-relaxed text-[color:var(--site-muted)]">
