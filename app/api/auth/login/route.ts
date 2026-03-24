@@ -24,6 +24,7 @@ function getIpAddress(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // console.log('request', request) // need parse to see the body
   const formData = await request.formData()
   const username = String(formData.get('username') ?? '').trim()
   const password = String(formData.get('password') ?? '')
@@ -45,6 +46,7 @@ export async function POST(request: NextRequest) {
     const payload = await buildSessionCookiePayload(result)
     const response = NextResponse.redirect(new URL(returnTo, request.url), SEE_OTHER_STATUS)
 
+    // console.log('response', payload, response)
     await writeSessionCookie(response, payload)
 
     return response

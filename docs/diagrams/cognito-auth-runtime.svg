@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">Vibe Cognito auth architecture</title>
+  <desc id="desc">Runtime and deployment diagram for the Next.js BFF authentication stack using API Gateway, Lambda, Cognito, DynamoDB, Secrets Manager, and SSM Parameter Store.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f8fc; }
+      .title { font: 700 30px 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 16px 'Segoe UI', Arial, sans-serif; fill: #475569; }
+      .section { font: 700 20px 'Segoe UI', Arial, sans-serif; fill: #1e293b; }
+      .label { font: 700 18px 'Segoe UI', Arial, sans-serif; fill: #ffffff; }
+      .small { font: 400 14px 'Segoe UI', Arial, sans-serif; fill: #e2e8f0; }
+      .noteLabel { font: 700 16px 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+      .noteText { font: 400 13px 'Segoe UI', Arial, sans-serif; fill: #334155; }
+      .edge { font: 600 13px 'Segoe UI', Arial, sans-serif; fill: #1d4ed8; }
+      .edgeMuted { font: 600 13px 'Segoe UI', Arial, sans-serif; fill: #7c3aed; }
+      .runtimeBox { rx: 22; ry: 22; stroke-width: 2; }
+      .noteBox { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 18; ry: 18; }
+      .runtimeArrow { stroke: #2563eb; stroke-width: 4; fill: none; }
+      .configArrow { stroke: #7c3aed; stroke-width: 3; fill: none; stroke-dasharray: 10 8; }
+      .separator { stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 8 8; }
+    </style>
+    <marker id="arrowBlue" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#2563eb" />
+    </marker>
+    <marker id="arrowPurple" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#7c3aed" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1400" height="920" />
+
+  <text class="title" x="60" y="62">Vibe Cognito Authentication Architecture</text>
+  <text class="subtitle" x="60" y="92">Accurate to the current codebase: browser talks only to Next.js, and Next.js calls the auth API in remote mode.</text>
+
+  <text class="section" x="60" y="145">Runtime Flow</text>
+  <line class="separator" x1="60" y1="160" x2="1340" y2="160" />
+
+  <rect class="runtimeBox" x="90" y="235" width="220" height="110" fill="#0f766e" stroke="#115e59" />
+  <text class="label" x="200" y="278" text-anchor="middle">Browser</text>
+  <text class="small" x="200" y="306" text-anchor="middle">Sign-in form</text>
+  <text class="small" x="200" y="326" text-anchor="middle">Protected page requests</text>
+
+  <rect class="runtimeBox" x="390" y="210" width="280" height="160" fill="#1d4ed8" stroke="#1e40af" />
+  <text class="label" x="530" y="255" text-anchor="middle">Next.js SSR / BFF</text>
+  <text class="small" x="530" y="285" text-anchor="middle">App routes and server components</text>
+  <text class="small" x="530" y="305" text-anchor="middle">Validates JWTs and writes cookie</text>
+  <text class="small" x="530" y="325" text-anchor="middle">Uses env vars already injected before runtime</text>
+
+  <rect class="runtimeBox" x="410" y="410" width="240" height="86" fill="#0f766e" stroke="#115e59" />
+  <text class="label" x="530" y="448" text-anchor="middle">Encrypted HTTP-only cookie</text>
+  <text class="small" x="530" y="472" text-anchor="middle">Contains session metadata and session ID</text>
+
+  <rect class="runtimeBox" x="760" y="235" width="240" height="110" fill="#7c3aed" stroke="#6d28d9" />
+  <text class="label" x="880" y="278" text-anchor="middle">API Gateway HTTP API</text>
+  <text class="small" x="880" y="306" text-anchor="middle">POST /auth/login</text>
+  <text class="small" x="880" y="326" text-anchor="middle">/auth/refresh /auth/logout</text>
+
+  <rect class="runtimeBox" x="1080" y="210" width="240" height="160" fill="#ea580c" stroke="#c2410c" />
+  <text class="label" x="1200" y="255" text-anchor="middle">Lambda auth API</text>
+  <text class="small" x="1200" y="285" text-anchor="middle">Checks shared service token</text>
+  <text class="small" x="1200" y="305" text-anchor="middle">Calls Cognito</text>
+  <text class="small" x="1200" y="325" text-anchor="middle">Stores and revokes sessions</text>
+
+  <rect class="runtimeBox" x="1000" y="500" width="260" height="108" fill="#be123c" stroke="#9f1239" />
+  <text class="label" x="1130" y="544" text-anchor="middle">Amazon Cognito User Pool</text>
+  <text class="small" x="1130" y="572" text-anchor="middle">ADMIN_USER_PASSWORD_AUTH</text>
+  <text class="small" x="1130" y="592" text-anchor="middle">REFRESH_TOKEN_AUTH and RevokeToken</text>
+
+  <rect class="runtimeBox" x="690" y="500" width="230" height="108" fill="#b45309" stroke="#92400e" />
+  <text class="label" x="805" y="544" text-anchor="middle">DynamoDB session store</text>
+  <text class="small" x="805" y="572" text-anchor="middle">Refresh-token-backed session records</text>
+  <text class="small" x="805" y="592" text-anchor="middle">TTL and revocation marker</text>
+
+  <rect class="runtimeBox" x="1080" y="650" width="240" height="98" fill="#334155" stroke="#1e293b" />
+  <text class="label" x="1200" y="690" text-anchor="middle">Secrets Manager</text>
+  <text class="small" x="1200" y="718" text-anchor="middle">Shared BFF service token</text>
+
+  <line class="runtimeArrow" x1="310" y1="290" x2="390" y2="290" marker-end="url(#arrowBlue)" />
+  <text class="edge" x="349" y="274" text-anchor="middle">Sign-in and protected requests</text>
+
+  <line class="runtimeArrow" x1="530" y1="370" x2="530" y2="410" marker-end="url(#arrowBlue)" />
+  <text class="edge" x="550" y="395">Set and clear cookie</text>
+
+  <line class="runtimeArrow" x1="470" y1="410" x2="350" y2="345" marker-end="url(#arrowBlue)" />
+  <text class="edge" x="330" y="396">Cookie returns automatically</text>
+
+  <line class="runtimeArrow" x1="670" y1="290" x2="760" y2="290" marker-end="url(#arrowBlue)" />
+  <text class="edge" x="715" y="274" text-anchor="middle">Remote mode auth requests</text>
+
+  <line class="runtimeArrow" x1="1000" y1="290" x2="1080" y2="290" marker-end="url(#arrowBlue)" />
+  <text class="edge" x="1040" y="274" text-anchor="middle">Lambda proxy integration</text>
+
+  <line class="runtimeArrow" x1="1130" y1="370" x2="860" y2="500" marker-end="url(#arrowBlue)" />
+  <text class="edge" x="990" y="460" text-anchor="middle">Create, refresh, revoke session rows</text>
+
+  <line class="runtimeArrow" x1="1200" y1="370" x2="1145" y2="500" marker-end="url(#arrowBlue)" />
+  <text class="edge" x="1245" y="450">Auth and token operations</text>
+
+  <line class="runtimeArrow" x1="1200" y1="370" x2="1200" y2="650" marker-end="url(#arrowBlue)" />
+  <text class="edge" x="1220" y="520">Read shared service token</text>
+
+  <text class="section" x="60" y="810">Deployment and Config Path</text>
+  <line class="separator" x1="60" y1="825" x2="1340" y2="825" />
+
+  <rect class="noteBox" x="90" y="845" width="245" height="50" />
+  <text class="noteLabel" x="212" y="876" text-anchor="middle">SSM Parameter Store</text>
+
+  <rect class="noteBox" x="410" y="845" width="280" height="50" />
+  <text class="noteLabel" x="550" y="876" text-anchor="middle">Next.js environment variables</text>
+
+  <rect class="noteBox" x="765" y="845" width="245" height="50" />
+  <text class="noteLabel" x="887" y="876" text-anchor="middle">Secrets Manager</text>
+
+  <line class="configArrow" x1="335" y1="870" x2="410" y2="870" marker-end="url(#arrowPurple)" />
+  <text class="edgeMuted" x="372" y="854" text-anchor="middle">Publish non-secret config</text>
+
+  <line class="configArrow" x1="765" y1="870" x2="690" y2="870" marker-end="url(#arrowPurple)" />
+  <text class="edgeMuted" x="727" y="854" text-anchor="middle">Publish secrets</text>
+
+  <text class="noteText" x="1020" y="862">These values are copied into Next.js by a manual step or deployment pipeline.</text>
+  <text class="noteText" x="1020" y="882">Only Lambda reads Secrets Manager at runtime in the current implementation.</text>
+</svg>
