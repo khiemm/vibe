@@ -7,8 +7,7 @@ The authentication flow is intentionally server-centric:
 - `Next.js` acts as the backend-for-frontend and owns the browser session.
 - The browser never stores auth state in `localStorage`.
 - The app sets one encrypted HTTP-only cookie that contains only session metadata and a server session ID.
-- In `mock` mode, Next issues locally signed JWTs for testing and stores mock sessions in memory.
-- In `remote` mode, Next talks to the serverless auth API over a shared service token.
+- `Next.js` talks to the serverless auth API over a shared service token.
 - The auth API uses `Cognito` for password authentication and refresh.
 - `DynamoDB` stores refresh-token-backed session records keyed by session ID.
 - `Secrets Manager` stores the shared BFF-to-auth-API token and the Next session secret.
@@ -28,7 +27,6 @@ Why:
 
 - It keeps the login experience first-party inside the Next app.
 - It fits the BFF pattern cleanly because the browser only talks to Next.
-- It makes local mock testing much simpler.
 - Passwords are still only verified by Cognito and are never stored by the app.
 
 If you later need social login, enterprise federation, or OAuth consent flows, Hosted UI is the right next step.
@@ -123,17 +121,25 @@ This means the infrastructure stack is complete, but app deployment and env inje
 ## Local Run
 
 1. Copy `.env.example` values into `.env.local`.
-2. Keep `AUTH_MODE=mock`.
-3. Set `AUTH_SESSION_SECRET` and `MOCK_AUTH_JWT_SECRET` to strong values.
-4. Start the app:
+2. Fill in the Cognito and auth API values from AWS:
+
+- `AUTH_SESSION_SECRET` from `Secrets Manager`
+- `AUTH_API_SERVICE_TOKEN` from `Secrets Manager`
+- `AUTH_API_BASE_URL` from `SSM Parameter Store`
+- `COGNITO_USER_POOL_ID` from `SSM Parameter Store`
+- `COGNITO_USER_POOL_CLIENT_ID` from `SSM Parameter Store`
+- `COGNITO_ISSUER` from `SSM Parameter Store`
+- `COGNITO_JWKS_URI` from `SSM Parameter Store`
+
+3. Start the app:
 
 ```bash
 npm run dev
 ```
 
-5. Open `http://localhost:3434/sign-in`.
-6. Use the mock credentials from `.env.local`.
-7. Confirm that:
+4. Open `http://localhost:3434/sign-in`.
+5. Sign in with a real Cognito user.
+6. Confirm that:
 
 - `/protected` redirects to `/sign-in` when signed out
 - sign-in sets the cookie and renders `/protected`
@@ -180,7 +186,7 @@ The stack provisions:
 
 For deployed Next.js environments, set:
 
-- `AUTH_MODE=remote`
+- `AUTH_MODE=remote` or `AUTH_MODE=disabled`
 - `APP_BASE_URL`
 - `AUTH_SESSION_SECRET`
 - `AUTH_API_BASE_URL`
@@ -193,6 +199,56 @@ For deployed Next.js environments, set:
 
 The CDK stack publishes the non-secret values into SSM and the secret ARNs into SSM as references.
 Those values are then copied into the deployed Next.js environment. The current runtime code does not fetch SSM or Secrets Manager directly during a user request.
+
+## Cost Control And Public Access
+
+### Pause the app-level auth flow
+
+Set `AUTH_MODE=disabled` in `.env.local` or in your deployment target, then redeploy the Next.js app.
+
+When auth is disabled:
+
+- the sign-in form is hidden
+- the header and home page stop rendering sign-in and protected links
+- protected pages redirect back to `/sign-in` with a disabled reason
+- login and refresh routes stop calling the upstream auth API
+
+This is the smoothest way to pause auth without deleting AWS resources.
+
+### Restrict the public entry point
+
+If you want the auth API itself to stop accepting traffic over its default public URL:
+
+1. Open `API Gateway`
+2. Open the HTTP API created by this stack
+3. Open API details
+4. Disable the default `execute-api` endpoint
+
+Important:
+
+- this blocks `AUTH_API_BASE_URL` if it still points to the default `execute-api` hostname
+- do this only if auth should be fully offline, or if you already have a custom domain for the API
+
+### Remove Secrets Manager storage cost
+
+If you want to remove the recurring storage cost from `Secrets Manager`, you can delete:
+
+- `vibe/auth/api-service-token`
+- `vibe/auth/next-session-secret`
+
+Important:
+
+- after deleting those secrets, the current remote auth setup will no longer work
+- if you later want auth back, you will need to run `cdk deploy` again so the secrets are recreated
+- once recreated, copy the new secret values into your deployment target again, such as Vercel env vars
+
+### What this does not pause
+
+These controls do not automatically remove every AWS cost:
+
+- `Secrets Manager` stops costing only if you actually delete the secrets
+- `DynamoDB` can still cost for stored data and PITR while the table exists
+- `API Gateway`, `Lambda`, and `Cognito` usually only add meaningful cost when they are used
 
 ## Manual AWS Setup
 
@@ -217,6 +273,5 @@ npx cdk deploy
 
 ## Limitations
 
-- The mock auth session store is in-memory and meant only for local development.
 - The direct auth API path is great for BFF flows, but Hosted UI is a better fit if you need third-party identity providers.
 - The DynamoDB session record stores the Cognito refresh token encrypted at rest by DynamoDB, but not application-level encrypted. Add envelope encryption if your compliance model requires it.

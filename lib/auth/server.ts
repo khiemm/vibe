@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 import type { AuthServiceSuccess } from '@/lib/auth/contracts'
-import { getAuthConfig } from '@/lib/auth/config'
+import { getAuthConfig, isAuthDisabled } from '@/lib/auth/config'
 import { decryptSessionCookie, type SessionCookiePayload } from '@/lib/auth/session-cookie'
 import { verifyAuthServiceTokens } from '@/lib/auth/token-verifier'
 
@@ -52,6 +52,10 @@ export function needsSessionRefresh(session: SessionCookiePayload) {
 }
 
 export async function requirePageSession(returnTo: string) {
+  if (isAuthDisabled()) {
+    redirect(`/sign-in?reason=disabled&returnTo=${encodeURIComponent(returnTo)}`)
+  }
+
   const session = await getCurrentSession()
 
   if (!session) {

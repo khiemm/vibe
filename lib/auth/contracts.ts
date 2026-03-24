@@ -1,4 +1,4 @@
-export type AuthMode = 'mock' | 'remote'
+export type AuthMode = 'remote' | 'disabled'
 
 export type SignInRequest = {
   username: string

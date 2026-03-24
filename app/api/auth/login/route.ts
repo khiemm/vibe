@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isAuthDisabled } from '@/lib/auth/config'
 import { AuthError } from '@/lib/auth/errors'
 import { assertSameOrigin } from '@/lib/auth/origin'
 import { getAuthProvider } from '@/lib/auth/provider'
@@ -32,6 +33,10 @@ export async function POST(request: NextRequest) {
 
   try {
     assertSameOrigin(request)
+
+    if (isAuthDisabled()) {
+      throw new AuthError(503, 'auth_disabled', 'Authentication is currently disabled')
+    }
 
     if (!username || !password) {
       throw new AuthError(400, 'missing_credentials', 'Username and password are required')

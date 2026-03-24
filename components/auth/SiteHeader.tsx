@@ -1,7 +1,9 @@
 import Link from 'next/link'
+import { getAuthConfig } from '@/lib/auth/config'
 import { getCurrentSession } from '@/lib/auth/server'
 
 export default async function SiteHeader() {
+  const authDisabled = getAuthConfig().authMode === 'disabled'
   const session = await getCurrentSession()
 
   return (
@@ -18,34 +20,38 @@ export default async function SiteHeader() {
             <Link href="/prices" className="transition-colors hover:text-[color:var(--site-text)]">
               Prices
             </Link>
-            <Link href="/protected" className="transition-colors hover:text-[color:var(--site-text)]">
-              Protected
-            </Link>
+            {!authDisabled && (
+              <Link href="/protected" className="transition-colors hover:text-[color:var(--site-text)]">
+                Protected
+              </Link>
+            )}
           </nav>
         </div>
 
-        <div className="flex items-center gap-3 text-sm font-light text-[color:var(--site-muted)]">
-          {session ? (
-            <>
-              <span className="hidden sm:inline">{session.user.email ?? session.user.username}</span>
-              <form action="/api/auth/logout" method="post">
-                <button
-                  type="submit"
-                  className="border border-white/15 px-3 py-1.5 text-[color:var(--site-text)] transition-colors hover:border-white/25 hover:text-[color:var(--site-heading)]"
-                >
-                  Sign out
-                </button>
-              </form>
-            </>
-          ) : (
-            <Link
-              href="/sign-in"
-              className="border border-white/15 px-3 py-1.5 text-[color:var(--site-text)] transition-colors hover:border-white/25 hover:text-[color:var(--site-heading)]"
-            >
-              Sign in
-            </Link>
-          )}
-        </div>
+        {!authDisabled && (
+          <div className="flex items-center gap-3 text-sm font-light text-[color:var(--site-muted)]">
+            {session ? (
+              <>
+                <span className="hidden sm:inline">{session.user.email ?? session.user.username}</span>
+                <form action="/api/auth/logout" method="post">
+                  <button
+                    type="submit"
+                    className="border border-white/15 px-3 py-1.5 text-[color:var(--site-text)] transition-colors hover:border-white/25 hover:text-[color:var(--site-heading)]"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </>
+            ) : (
+              <Link
+                href="/sign-in"
+                className="border border-white/15 px-3 py-1.5 text-[color:var(--site-text)] transition-colors hover:border-white/25 hover:text-[color:var(--site-heading)]"
+              >
+                Sign in
+              </Link>
+            )}
+          </div>
+        )}
       </div>
     </header>
   )

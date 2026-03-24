@@ -69,6 +69,7 @@ This repo now includes a server-rendered authentication slice designed around:
 - Cognito as the identity provider
 - a serverless auth API built with API Gateway, Lambda, DynamoDB, IAM, CloudWatch, SSM, and Secrets Manager
 
-Local development defaults to `AUTH_MODE=mock`, so you can validate the SSR auth flow without touching AWS.
+The app now runs only against the Cognito-backed auth flow, so local development should point `.env.local` at the deployed AWS stack.
+Set `AUTH_MODE=disabled` when you want to hide the login UI and pause the app-level auth flow without deleting the AWS resources.
 
 Detailed setup, local testing, and AWS deployment steps live in [docs/cognito-auth.md](docs/cognito-auth.md).

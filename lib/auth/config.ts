@@ -9,18 +9,6 @@ type BaseConfig = {
   sessionRefreshWindowSeconds: number
 }
 
-type MockConfig = {
-  accessTokenTtlSeconds: number
-  refreshTokenTtlSeconds: number
-  username: string
-  password: string
-  email: string
-  displayName: string
-  issuer: string
-  clientId: string
-  jwtSecret: string
-}
-
 type RemoteConfig = {
   authApiBaseUrl: string
   authApiServiceToken: string
@@ -32,7 +20,6 @@ type RemoteConfig = {
 }
 
 export type AuthConfig = BaseConfig & {
-  mock: MockConfig
   remote: RemoteConfig
 }
 
@@ -62,13 +49,12 @@ function readNumberEnv(name: string, fallback: number) {
 
 function buildConfig(): AuthConfig {
   const appBaseUrl = readEnv('APP_BASE_URL', 'http://localhost:3434')
-  const authMode = (process.env.AUTH_MODE ?? 'mock') as AuthMode
+  const authMode = (process.env.AUTH_MODE ?? 'remote') as AuthMode
+  const sessionSecret = readEnv('AUTH_SESSION_SECRET')
 
-  if (authMode !== 'mock' && authMode !== 'remote') {
+  if (authMode !== 'remote' && authMode !== 'disabled') {
     throw new Error(`Unsupported AUTH_MODE "${authMode}"`)
   }
-
-  const sessionSecret = readEnv('AUTH_SESSION_SECRET', 'dev-session-secret-change-me-at-least-32')
 
   if (sessionSecret.length < 32) {
     throw new Error('AUTH_SESSION_SECRET must be at least 32 characters long')
@@ -79,8 +65,12 @@ function buildConfig(): AuthConfig {
     (process.env.NODE_ENV === 'production' && appBaseUrl.startsWith('https://'))
 
   const awsRegion = process.env.COGNITO_AWS_REGION ?? process.env.AWS_REGION ?? 'ap-southeast-1'
-  const userPoolId = process.env.COGNITO_USER_POOL_ID ?? 'local-user-pool'
-  const clientId = process.env.COGNITO_USER_POOL_CLIENT_ID ?? 'local-client-id'
+  const userPoolId =
+    authMode === 'disabled' ? process.env.COGNITO_USER_POOL_ID ?? 'disabled-user-pool' : readEnv('COGNITO_USER_POOL_ID')
+  const clientId =
+    authMode === 'disabled'
+      ? process.env.COGNITO_USER_POOL_CLIENT_ID ?? 'disabled-client-id'
+      : readEnv('COGNITO_USER_POOL_CLIENT_ID')
   const issuer =
     process.env.COGNITO_ISSUER ??
     `https://cognito-idp.${awsRegion}.amazonaws.com/${userPoolId}`
@@ -92,20 +82,15 @@ function buildConfig(): AuthConfig {
     secureCookies,
     sessionSecret,
     sessionRefreshWindowSeconds: readNumberEnv('AUTH_SESSION_REFRESH_WINDOW_SECONDS', 120),
-    mock: {
-      accessTokenTtlSeconds: readNumberEnv('MOCK_AUTH_ACCESS_TOKEN_TTL_SECONDS', 900),
-      refreshTokenTtlSeconds: readNumberEnv('MOCK_AUTH_REFRESH_TOKEN_TTL_SECONDS', 60 * 60 * 24 * 7),
-      username: process.env.MOCK_AUTH_USERNAME ?? 'demo@example.com',
-      password: process.env.MOCK_AUTH_PASSWORD ?? 'ChangeMe123!',
-      email: process.env.MOCK_AUTH_EMAIL ?? 'demo@example.com',
-      displayName: process.env.MOCK_AUTH_DISPLAY_NAME ?? 'Demo User',
-      issuer: process.env.MOCK_AUTH_ISSUER ?? `${appBaseUrl}/mock-cognito`,
-      clientId: process.env.MOCK_AUTH_CLIENT_ID ?? 'mock-web-client',
-      jwtSecret: readEnv('MOCK_AUTH_JWT_SECRET', 'mock-jwt-secret-change-me-at-least-32'),
-    },
     remote: {
-      authApiBaseUrl: readEnv('AUTH_API_BASE_URL', 'http://localhost:3434'),
-      authApiServiceToken: readEnv('AUTH_API_SERVICE_TOKEN', 'dev-auth-api-service-token'),
+      authApiBaseUrl:
+        authMode === 'disabled'
+          ? process.env.AUTH_API_BASE_URL ?? 'https://disabled.invalid'
+          : readEnv('AUTH_API_BASE_URL'),
+      authApiServiceToken:
+        authMode === 'disabled'
+          ? process.env.AUTH_API_SERVICE_TOKEN ?? 'disabled-service-token'
+          : readEnv('AUTH_API_SERVICE_TOKEN'),
       awsRegion,
       userPoolId,
       clientId,
@@ -129,4 +114,8 @@ export function getAuthConfig() {
 
 export function resetAuthConfigForTests() {
   cachedConfig = null
+}
+
+export function isAuthDisabled() {
+  return getAuthConfig().authMode === 'disabled'
 }

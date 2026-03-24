@@ -6,7 +6,6 @@ import type {
 } from '@/lib/auth/contracts'
 import { getAuthConfig } from '@/lib/auth/config'
 import { AuthError } from '@/lib/auth/errors'
-import { signInWithMockAuth, signOutWithMockAuth, refreshMockSession } from '@/lib/auth/mock-auth-service'
 import { isAuthServiceErrorShape, isAuthServiceSuccess } from '@/lib/auth/contracts'
 
 type AuthProvider = {
@@ -75,12 +74,18 @@ const remoteProvider: AuthProvider = {
   },
 }
 
-const mockProvider: AuthProvider = {
-  signIn: signInWithMockAuth,
-  refresh: refreshMockSession,
-  signOut: signOutWithMockAuth,
+const disabledProvider: AuthProvider = {
+  async signIn() {
+    throw new AuthError(503, 'auth_disabled', 'Authentication is currently disabled')
+  },
+  async refresh() {
+    throw new AuthError(503, 'auth_disabled', 'Authentication is currently disabled')
+  },
+  async signOut() {
+    return
+  },
 }
 
 export function getAuthProvider(): AuthProvider {
-  return getAuthConfig().authMode === 'mock' ? mockProvider : remoteProvider
+  return getAuthConfig().authMode === 'disabled' ? disabledProvider : remoteProvider
 }

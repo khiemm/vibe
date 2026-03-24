@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isAuthDisabled } from '@/lib/auth/config'
 import { assertSameOrigin } from '@/lib/auth/origin'
 import { getAuthProvider } from '@/lib/auth/provider'
 import { getSessionFromRequest, normalizeReturnTo } from '@/lib/auth/server'
@@ -13,6 +14,10 @@ export async function POST(request: NextRequest) {
 
   try {
     assertSameOrigin(request)
+
+    if (isAuthDisabled()) {
+      throw new Error('auth_disabled')
+    }
 
     const session = await getSessionFromRequest(request)
 

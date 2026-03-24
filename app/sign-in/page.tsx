@@ -23,6 +23,10 @@ function getMessage(error?: string, reason?: string) {
     return 'Sign in is required before opening that page.'
   }
 
+  if (reason === 'disabled' || error === 'auth_disabled') {
+    return 'Authentication is temporarily unavailable.'
+  }
+
   if (error === 'invalid_origin') {
     return 'The auth request was blocked because it did not come from this site.'
   }
@@ -36,9 +40,10 @@ function getMessage(error?: string, reason?: string) {
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
   const returnTo = normalizeReturnTo(searchParams?.returnTo)
+  const authDisabled = getAuthConfig().authMode === 'disabled'
   const session = await getCurrentSession()
 
-  if (session) {
+  if (session && !authDisabled) {
     if (needsSessionRefresh(session)) {
       redirect(`/api/auth/refresh?returnTo=${encodeURIComponent(returnTo)}`)
     }
@@ -46,8 +51,9 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     redirect(returnTo)
   }
 
-  const config = getAuthConfig()
-  const message = getMessage(searchParams?.error, searchParams?.reason)
+  const message =
+    getMessage(searchParams?.error, searchParams?.reason) ??
+    (authDisabled ? 'Authentication is temporarily unavailable.' : null)
 
   return (
     <main className="flex min-h-[calc(100vh-73px)] items-center justify-center px-4 py-16">
@@ -71,49 +77,43 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
           </p>
         )}
 
-        <form action="/api/auth/login" method="post" className="space-y-5">
-          <input type="hidden" name="returnTo" value={returnTo} />
+        {authDisabled ? (
+          <p className="text-sm font-light leading-7 text-[color:var(--site-muted)]">
+            The sign-in form is hidden while authentication is disabled for this deployment.
+          </p>
+        ) : (
+          <form action="/api/auth/login" method="post" className="space-y-5">
+            <input type="hidden" name="returnTo" value={returnTo} />
 
-          <label className="block space-y-2">
-            <span className="text-sm font-light text-[color:var(--site-muted)]">Email</span>
-            <input
-              type="email"
-              name="username"
-              defaultValue={config.authMode === 'mock' ? config.mock.username : ''}
-              autoComplete="username"
-              className="w-full border border-white/10 bg-transparent px-3 py-2.5 text-sm text-[color:var(--site-text)] outline-none transition-colors focus:border-white/30"
-              required
-            />
-          </label>
+            <label className="block space-y-2">
+              <span className="text-sm font-light text-[color:var(--site-muted)]">Email</span>
+              <input
+                type="email"
+                name="username"
+                autoComplete="username"
+                className="w-full border border-white/10 bg-transparent px-3 py-2.5 text-sm text-[color:var(--site-text)] outline-none transition-colors focus:border-white/30"
+                required
+              />
+            </label>
 
-          <label className="block space-y-2">
-            <span className="text-sm font-light text-[color:var(--site-muted)]">Password</span>
-            <input
-              type="password"
-              name="password"
-              defaultValue={config.authMode === 'mock' ? config.mock.password : ''}
-              autoComplete="current-password"
-              className="w-full border border-white/10 bg-transparent px-3 py-2.5 text-sm text-[color:var(--site-text)] outline-none transition-colors focus:border-white/30"
-              required
-            />
-          </label>
+            <label className="block space-y-2">
+              <span className="text-sm font-light text-[color:var(--site-muted)]">Password</span>
+              <input
+                type="password"
+                name="password"
+                autoComplete="current-password"
+                className="w-full border border-white/10 bg-transparent px-3 py-2.5 text-sm text-[color:var(--site-text)] outline-none transition-colors focus:border-white/30"
+                required
+              />
+            </label>
 
-          <button
-            type="submit"
-            className="w-full border border-white/20 px-4 py-3 text-sm text-[color:var(--site-heading)] transition-colors hover:border-white/35 hover:bg-white/[0.04]"
-          >
-            Continue
-          </button>
-        </form>
-
-        {config.authMode === 'mock' && (
-          <div className="space-y-2 border-t border-white/10 pt-5 text-sm font-light text-[color:var(--site-muted)]">
-            <p>Local mock auth is enabled for SSR testing.</p>
-            <p>
-              Use <span className="text-[color:var(--site-text)]">{config.mock.username}</span> and{' '}
-              <span className="text-[color:var(--site-text)]">{config.mock.password}</span>.
-            </p>
-          </div>
+            <button
+              type="submit"
+              className="w-full border border-white/20 px-4 py-3 text-sm text-[color:var(--site-heading)] transition-colors hover:border-white/35 hover:bg-white/[0.04]"
+            >
+              Continue
+            </button>
+          </form>
         )}
       </section>
     </main>
